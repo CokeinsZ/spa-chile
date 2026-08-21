@@ -1,0 +1,19 @@
+---
+import Icon from '../atoms/Icon.astro';
+import type { IconName } from '../../data/icons';
+
+interface Props {
+  icon: IconName;
+  /** Parte destacada en negrita. */
+  label: string;
+  /** Texto complementario. */
+  text: string;
+}
+
+const { icon, label, text } = Astro.props;
+---
+
+<div class="flex items-center gap-2.5 text-[13px] text-ink-soft">
+  <Icon name={icon} class="h-[18px] w-[18px] shrink-0 text-teal-deep" />
+  <span><strong class="font-semibold text-ink">{label}</strong>&nbsp;{text}</span>
+</div>

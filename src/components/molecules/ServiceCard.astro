@@ -1,0 +1,22 @@
+---
+import Icon from '../atoms/Icon.astro';
+import Led from '../atoms/Led.astro';
+import type { Service } from '../../data/services';
+
+type Props = Service;
+
+const { code, icon, title, description, brands } = Astro.props;
+---
+
+<article class="group bg-navy-2 px-6 py-7 transition-colors duration-300 hover:bg-[#20404f]">
+  <div class="mb-5 flex items-center justify-between">
+    <span class="text-[11px] font-semibold tracking-[0.03em] text-[#7fa3a0]">{code}</span>
+    <Led
+      class="group-hover:bg-led-on group-hover:shadow-[0_0_10px_2px_rgba(62,224,143,0.65)]"
+    />
+  </div>
+  <Icon name={icon} class="mb-4 h-[34px] w-[34px] text-teal-light" />
+  <h3 class="mb-2.5 font-display text-lg font-semibold text-white">{title}</h3>
+  <p class="text-[13.5px] leading-[1.6] text-[#a9bcbb]">{description}</p>
+  <p class="mt-4 text-[11px] font-medium break-words tracking-[0.01em] text-[#5f8482]">{brands}</p>
+</article>

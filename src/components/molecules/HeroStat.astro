@@ -1,0 +1,14 @@
+---
+/** Cifra destacada del hero (valor + rótulo). */
+interface Props {
+  value: string;
+  label: string;
+}
+
+const { value, label } = Astro.props;
+---
+
+<div class="min-w-[100px]">
+  <div class="font-display text-[26px] font-bold text-teal-light">{value}</div>
+  <div class="mt-1 text-xs tracking-[0.01em] text-[#9fb0af]">{label}</div>
+</div>

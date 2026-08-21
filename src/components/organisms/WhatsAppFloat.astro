@@ -1,0 +1,14 @@
+---
+import Icon from '../atoms/Icon.astro';
+import { whatsappDefaultLink } from '../../data/site';
+---
+
+<a
+  href={whatsappDefaultLink}
+  target="_blank"
+  rel="noopener"
+  aria-label="Escribir por WhatsApp"
+  class="fixed right-[22px] bottom-[22px] z-[60] flex h-14 w-14 items-center justify-center rounded-full bg-teal shadow-[0_10px_24px_-6px_rgba(0,0,0,0.4)] transition-transform duration-200 hover:scale-[1.07] max-sm:right-4 max-sm:bottom-4 max-sm:h-12 max-sm:w-12"
+>
+  <Icon name="whatsapp" class="h-[26px] w-[26px] text-white max-sm:h-[22px] max-sm:w-[22px]" />
+</a>

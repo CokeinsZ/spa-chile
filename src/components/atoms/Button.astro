@@ -1,0 +1,31 @@
+---
+/**
+ * Botón/enlace con las variantes visuales del sitio.
+ * Renderiza <a> si recibe `href`, si no <button>.
+ * Los estilos viven en `buttonStyles.ts` para reutilizarlos en React.
+ */
+import { buttonClass, type ButtonVariant } from './buttonStyles';
+
+interface Props {
+  href?: string;
+  variant?: ButtonVariant;
+  type?: 'button' | 'submit';
+  target?: string;
+  rel?: string;
+  class?: string;
+}
+
+const { href, variant = 'dark', type = 'button', target, rel, class: className } = Astro.props;
+
+const Tag = href ? 'a' : 'button';
+---
+
+<Tag
+  href={href}
+  type={href ? undefined : type}
+  target={target}
+  rel={rel}
+  class:list={[buttonClass(variant), className]}
+>
+  <slot />
+</Tag>

@@ -1,0 +1,37 @@
+---
+import Button from '../atoms/Button.astro';
+import Container from '../atoms/Container.astro';
+import Eyebrow from '../atoms/Eyebrow.astro';
+import BookingForm from './BookingForm';
+import { site, whatsappDefaultLink } from '../../data/site';
+---
+
+<section id="contacto" class="relative overflow-hidden bg-navy py-[84px] text-white max-sm:py-14">
+  {/* Resplandor decorativo inferior */}
+  <div
+    class="absolute inset-0 bg-[radial-gradient(700px_400px_at_50%_120%,rgba(28,156,148,0.4),transparent_70%)]"
+    aria-hidden="true"
+  >
+  </div>
+
+  <Container class="relative z-[2] grid grid-cols-2 items-start gap-[52px] max-[860px]:grid-cols-1 max-[860px]:gap-8">
+    <div>
+      <Eyebrow class="text-teal-light">Contacto</Eyebrow>
+      <h2 class="mt-2 font-display text-[clamp(26px,3.6vw,38px)] font-bold">
+        ¿Su equipo necesita revisión?
+      </h2>
+      <p class="mt-3.5 max-w-[440px] text-[15.5px] leading-[1.7] text-[#c6d3d2]">
+        Cuéntenos su comuna y el equipo con falla — le confirmamos disponibilidad de visita técnica
+        hoy mismo. O si prefiere, contáctenos directo:
+      </p>
+      <div class="mt-[26px] flex flex-wrap gap-3">
+        <Button href={whatsappDefaultLink} variant="primary" target="_blank" rel="noopener">
+          Escribir por WhatsApp
+        </Button>
+        <Button href={`tel:${site.phone}`} variant="outline">Llamar ahora</Button>
+      </div>
+    </div>
+
+    <BookingForm client:load />
+  </Container>
+</section>

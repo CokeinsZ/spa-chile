@@ -1,0 +1,23 @@
+---
+import { icons, type IconName } from '../../data/icons';
+
+interface Props {
+  name: IconName;
+  class?: string;
+}
+
+const { name, class: className } = Astro.props;
+const icon = icons[name];
+---
+
+<svg
+  class={className}
+  viewBox={icon.viewBox ?? '0 0 24 24'}
+  fill={icon.fill ? 'currentColor' : 'none'}
+  stroke={icon.fill ? 'none' : 'currentColor'}
+  stroke-width={icon.strokeWidth ?? 2}
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  set:html={icon.body}
+/>

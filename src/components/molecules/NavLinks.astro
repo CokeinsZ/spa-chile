@@ -1,0 +1,23 @@
+---
+import { navLinks } from '../../data/navigation';
+
+/** Enlaces de navegación de escritorio con subrayado animado. */
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<nav class:list={['flex gap-8', className]} aria-label="Navegación principal">
+  {
+    navLinks.map(({ href, label }) => (
+      <a
+        href={href}
+        class="relative py-1.5 text-sm font-medium text-ink-soft after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-teal after:transition-[width] after:duration-300 hover:after:w-full"
+      >
+        {label}
+      </a>
+    ))
+  }
+</nav>

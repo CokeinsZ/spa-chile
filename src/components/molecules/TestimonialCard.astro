@@ -1,0 +1,17 @@
+---
+import type { Testimonial } from '../../data/testimonials';
+
+type Props = Testimonial;
+
+const { quote, author } = Astro.props;
+---
+
+<figure class="rounded-lg border border-line bg-paper-2 p-[26px]">
+  <div class="mb-3.5 text-[13px] tracking-[2px] text-brick" aria-label="Calificación: 5 de 5 estrellas">
+    ★★★★★
+  </div>
+  <blockquote class="text-[14.5px] leading-[1.65] text-ink">{quote}</blockquote>
+  <figcaption class="mt-4 text-[11.5px] font-semibold tracking-[0.02em] text-ink-soft">
+    {author}
+  </figcaption>
+</figure>

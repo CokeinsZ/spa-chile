@@ -1,0 +1,33 @@
+---
+import Container from '../atoms/Container.astro';
+import Button from '../atoms/Button.astro';
+import NavLinks from '../molecules/NavLinks.astro';
+import MobileMenu from '../molecules/MobileMenu';
+import { site } from '../../data/site';
+---
+
+<header class="sticky top-0 z-50 border-b border-line bg-paper/95 backdrop-blur">
+  <Container class="flex h-[76px] items-center justify-between max-sm:px-4 sm:h-[92px]">
+    <a href="#" class="flex items-center" aria-label={`Inicio — ${site.name}`}>
+      <img
+        src="/logo.webp"
+        alt={`${site.name} — ${site.tagline}`}
+        width="760"
+        height="400"
+        class="h-[68px] w-auto max-sm:h-10"
+      />
+    </a>
+
+    <NavLinks class="max-[860px]:hidden" />
+
+    <div class="flex items-center gap-2.5 max-sm:gap-1.5">
+      <Button
+        href="#contacto"
+        class="max-[860px]:h-10 max-[860px]:px-2.5 max-[860px]:py-0 max-sm:px-2 max-sm:text-xs"
+      >
+        Pedir visita
+      </Button>
+      <MobileMenu client:load />
+    </div>
+  </Container>
+</header>

@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Servicio Americano SPA — Servicio Técnico Especializado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#122430;
+    --navy-2:#1a3442;
+    --teal-deep:#0b6b6a;
+    --teal:#1c9c94;
+    --teal-light:#5fd4c4;
+    --paper:#f6f4ee;
+    --paper-2:#ffffff;
+    --ink:#132022;
+    --ink-soft:#4d5c5e;
+    --brick:#a83a2c;
+    --brick-light:#c65742;
+    --led-off:#2a3f42;
+    --line: rgba(19,32,34,0.12);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    overflow-wrap:break-word;
+  }
+  h1,h2,h3,.disp{
+    font-family:'Poppins', sans-serif;
+    letter-spacing:0;
+  }
+  a{ color:inherit; text-decoration:none; }
+  img,svg{ display:block; max-width:100%; }
+  .wrap{ max-width:1180px; margin:0 auto; padding:0 32px; }
+  @media (max-width:640px){ .wrap{ padding:0 20px; } }
+  section[id]{ scroll-margin-top:90px; }
+
+  /* ---------- reduced motion ---------- */
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important; }
+  }
+
+  /* ---------- focus ---------- */
+  a:focus-visible, button:focus-visible, input:focus-visible{
+    outline:2px solid var(--teal);
+    outline-offset:2px;
+  }
+
+  /* ================= HEADER ================= */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(246,244,238,0.94);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    height:76px;
+  }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .brand-mark{ width:38px; height:38px; }
+  .brand-text{ line-height:1; }
+  .brand-text .b1{ font-family:'Poppins',sans-serif; font-weight:700; font-size:16px; letter-spacing:0; color:var(--navy); }
+  .brand-text .b2{ font-family:'Inter',sans-serif; font-weight:600; font-size:10px; letter-spacing:0.08em; color:var(--brick); margin-top:3px; }
+  nav.links{ display:flex; gap:32px; }
+  nav.links a{
+    font-size:14px; font-weight:500; letter-spacing:0; color:var(--ink-soft);
+    position:relative; padding:6px 0;
+  }
+  nav.links a::after{
+    content:""; position:absolute; left:0; bottom:0; height:2px; width:0%;
+    background:var(--teal); transition:width .25s ease;
+  }
+  nav.links a:hover::after{ width:100%; }
+  .nav-actions{ display:flex; align-items:center; gap:10px; }
+  .cta-btn{
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--navy); color:#fff; padding:11px 20px;
+    font-family:'Poppins',sans-serif; font-weight:600; font-size:14px;
+    letter-spacing:0;
+    border-radius:6px; border:1px solid var(--navy);
+    transition:background .2s ease, transform .15s ease;
+    cursor:pointer;
+  }
+  .cta-btn:hover{ background:var(--teal-deep); border-color:var(--teal-deep); transform:translateY(-1px); }
+  .cta-btn.ghost{ background:transparent; color:var(--navy); }
+  .cta-btn.ghost:hover{ background:var(--navy); color:#fff; }
+
+  .burger{
+    display:none; width:40px; height:40px; align-items:center; justify-content:center;
+    background:transparent; border:1px solid var(--line); border-radius:6px; color:var(--navy);
+  }
+  .burger svg{ width:20px; height:20px; }
+  .mobile-menu{ display:none; flex-direction:column; }
+  .mobile-menu a{
+    padding:14px 20px; font-size:15px; font-weight:500; color:var(--ink-soft);
+    border-top:1px solid var(--line);
+  }
+  .mobile-menu a:hover{ color:var(--teal-deep); }
+  .mobile-menu.open{ display:flex; }
+  @media (max-width:860px){
+    nav.links{ display:none; }
+    .burger{ display:flex; }
+  }
+
+  /* ================= HERO ================= */
+  .hero{
+    position:relative;
+    background:var(--navy);
+    color:#fff;
+    overflow:hidden;
+    padding-top:64px;
+  }
+  .hero-grid{
+    position:relative; z-index:3;
+    display:grid; grid-template-columns:1.05fr 0.85fr; gap:40px;
+    align-items:center;
+    padding:64px 0 96px;
+  }
+  @media (max-width:900px){
+    .hero-grid{ grid-template-columns:1fr; padding:40px 0 56px; gap:32px; }
+  }
+  .eyebrow{
+    display:flex; align-items:center; gap:10px;
+    font-family:'Inter',sans-serif; font-weight:600; font-size:13.5px; letter-spacing:0.01em;
+    color:var(--teal-light); margin-bottom:22px;
+  }
+  .eyebrow .dot{ width:7px; height:7px; border-radius:50%; background:var(--teal-light); box-shadow:0 0 0 3px rgba(95,212,196,0.18); animation:pulse 2.4s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{ opacity:1;} 50%{ opacity:.35;} }
+  .hero h1{
+    font-size:clamp(34px,5.6vw,60px);
+    line-height:1.08; font-weight:700;
+    max-width:620px;
+  }
+  .hero h1 .accent{ color:var(--teal-light); }
+  .hero p.lede{
+    margin-top:22px; max-width:480px;
+    font-size:16px; line-height:1.7; color:#c6d3d2;
+  }
+  .hero-ctas{ display:flex; gap:14px; margin-top:32px; flex-wrap:wrap; }
+  .hero-ctas .cta-btn.primary{ background:var(--brick); border-color:var(--brick); }
+  .hero-ctas .cta-btn.primary:hover{ background:var(--brick-light); border-color:var(--brick-light); }
+  .hero-ctas .cta-btn.outline{ background:transparent; border:1px solid rgba(255,255,255,0.35); color:#fff; }
+  .hero-ctas .cta-btn.outline:hover{ background:rgba(255,255,255,0.08); }
+
+  .hero-stats{
+    display:flex; gap:30px; margin-top:48px; flex-wrap:wrap;
+  }
+  .hstat{ min-width:100px; }
+  .hstat .num{ font-family:'Poppins',sans-serif; font-size:26px; font-weight:700; color:var(--teal-light); }
+  .hstat .lab{ font-size:12px; letter-spacing:0.01em; color:#9fb0af; margin-top:4px; }
+
+  /* wave background echoing the card */
+  .hero::before{
+    content:""; position:absolute; inset:0; z-index:0;
+    background:
+      radial-gradient(1100px 700px at 78% -10%, rgba(28,156,148,0.35), transparent 60%);
+  }
+  .hero-wave{ position:absolute; inset:0; z-index:1; opacity:0.9; }
+
+  /* right side: card-style panel */
+  .card-panel{
+    position:relative; z-index:3;
+    background:var(--paper-2);
+    border-radius:10px;
+    padding:26px 26px 22px;
+    color:var(--ink);
+    box-shadow:0 30px 60px -20px rgba(0,0,0,0.55);
+    transform:rotate(-1.4deg);
+  }
+  @media (max-width:900px){
+    .card-panel{ transform:none; }
+  }
+  @media (max-width:480px){
+    .card-panel{ padding:20px 20px 18px; }
+  }
+  .card-panel .cp-top{ display:flex; align-items:center; gap:12px; }
+  .card-panel .cp-mark{ width:46px; height:46px; }
+  .card-panel .cp-title{ font-family:'Poppins',sans-serif; font-weight:700; font-size:19px; line-height:1.15; color:var(--navy); }
+  .card-panel .cp-sub{ font-family:'Inter',sans-serif; font-weight:600; font-size:10.5px; letter-spacing:0.03em; color:var(--brick); margin-top:6px; }
+  .cp-divider{ height:2px; background:linear-gradient(90deg,var(--teal),transparent); margin:14px 0 16px; }
+  .cp-services{ display:flex; flex-direction:column; gap:9px; }
+  .cp-row{ display:flex; align-items:center; gap:10px; font-size:13px; color:var(--ink-soft); }
+  .cp-led{ width:8px; height:8px; border-radius:50%; background:var(--led-off); flex:none; transition:background .3s ease, box-shadow .3s ease; }
+  .cp-row.on .cp-led{ background:#3ee08f; box-shadow:0 0 8px 1px rgba(62,224,143,0.7); }
+  .cp-foot{ margin-top:18px; padding-top:14px; border-top:1px dashed var(--line); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; }
+  .cp-foot .cp-tag{ font-family:'Inter',sans-serif; font-weight:600; font-size:10.5px; letter-spacing:0.02em; color:var(--ink-soft); }
+
+  /* ================= TRUST STRIP ================= */
+  .strip{
+    background:var(--paper-2); border-bottom:1px solid var(--line);
+    padding:20px 0;
+  }
+  .strip .wrap{ display:flex; gap:32px; flex-wrap:wrap; justify-content:space-between; align-items:center; }
+  .strip .item{ display:flex; align-items:center; gap:10px; font-size:13px; color:var(--ink-soft); }
+  .strip .item b{ color:var(--ink); font-weight:600; }
+  .strip svg{ width:18px; height:18px; color:var(--teal-deep); flex:none; }
+
+  /* ================= SECTION HEADS ================= */
+  .section{ padding:88px 0; }
+  .section.tight{ padding:72px 0; }
+  @media (max-width:640px){ .section{ padding:56px 0; } .section.tight{ padding:48px 0; } }
+  .sec-head{ max-width:640px; margin-bottom:48px; }
+  .sec-eyebrow{
+    font-family:'Inter',sans-serif; font-weight:600; font-size:12.5px; letter-spacing:0.01em;
+    color:var(--brick); margin-bottom:12px; display:block;
+  }
+  .sec-head h2{ font-size:clamp(26px,3.6vw,40px); color:var(--navy); font-weight:700; line-height:1.15; }
+  .sec-head p{ margin-top:14px; color:var(--ink-soft); font-size:15.5px; line-height:1.65; max-width:520px; }
+
+  /* ================= SERVICES: CONTROL PANEL ================= */
+  .panel-board{
+    background:var(--navy); border-radius:10px; padding:8px;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,0.06);
+  }
+  .panel-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:2px;
+    background:rgba(255,255,255,0.06); border-radius:8px; overflow:hidden;
+  }
+  @media (max-width:820px){ .panel-grid{ grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:520px){ .panel-grid{ grid-template-columns:1fr; } }
+
+  .svc{
+    background:var(--navy-2); padding:28px 24px; position:relative;
+    transition:background .25s ease;
+    cursor:default;
+  }
+  .svc:hover{ background:#20404f; }
+  .svc-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+  .svc-led{ width:9px; height:9px; border-radius:50%; background:var(--led-off); box-shadow:0 0 0 0 rgba(62,224,143,0); transition:all .3s ease; }
+  .svc:hover .svc-led{ background:#3ee08f; box-shadow:0 0 10px 2px rgba(62,224,143,0.65); }
+  .svc-code{ font-family:'Inter',sans-serif; font-weight:600; font-size:11px; color:#7fa3a0; letter-spacing:0.03em; }
+  .svc-icon{ width:34px; height:34px; color:var(--teal-light); margin-bottom:16px; }
+  .svc h3{ color:#fff; font-size:18px; font-weight:600; letter-spacing:0; margin-bottom:10px; }
+  .svc p{ color:#a9bcbb; font-size:13.5px; line-height:1.6; }
+  .svc .brands{ margin-top:16px; font-family:'Inter',sans-serif; font-weight:500; font-size:11px; color:#5f8482; letter-spacing:0.01em; overflow-wrap:break-word; }
+
+  /* ================= PROCESS ================= */
+  .process{ display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+  @media (max-width:820px){ .process{ grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:520px){ .process{ grid-template-columns:1fr; } }
+  .step{ background:var(--paper-2); padding:30px 24px; }
+  .step .num{ font-family:'Inter',sans-serif; font-weight:700; font-size:13px; color:var(--brick); letter-spacing:0.02em; }
+  .step h4{ font-family:'Poppins',sans-serif; font-size:17px; font-weight:600; margin:14px 0 10px; color:var(--navy); }
+  .step p{ font-size:14px; color:var(--ink-soft); line-height:1.6; }
+
+  /* ================= GUARANTEE / SPLIT ================= */
+  .split{
+    display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center;
+  }
+  @media (max-width:860px){ .split{ grid-template-columns:1fr; gap:32px; } }
+  .split .visual{
+    position:relative; border-radius:10px; overflow:hidden;
+    background:linear-gradient(135deg, var(--teal-deep), var(--navy) 70%);
+    aspect-ratio:4/3; display:flex; align-items:center; justify-content:center;
+  }
+  .split .visual svg{ width:56%; height:56%; }
+  .split ul{ list-style:none; margin-top:20px; display:flex; flex-direction:column; gap:14px; }
+  .split li{ display:flex; gap:12px; font-size:15px; color:var(--ink-soft); align-items:flex-start; }
+  .split li svg{ width:18px; height:18px; color:var(--teal-deep); flex:none; margin-top:2px; }
+  .split li b{ color:var(--ink); font-weight:600; }
+
+  /* ================= TESTIMONIALS ================= */
+  .testi-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+  @media (max-width:900px){ .testi-row{ grid-template-columns:1fr; } }
+  .testi{ background:var(--paper-2); border:1px solid var(--line); border-radius:8px; padding:26px; }
+  .testi .stars{ color:var(--brick); font-size:13px; letter-spacing:2px; margin-bottom:14px; }
+  .testi p{ font-size:14.5px; line-height:1.65; color:var(--ink); }
+  .testi .who{ margin-top:16px; font-family:'Inter',sans-serif; font-weight:600; font-size:11.5px; color:var(--ink-soft); letter-spacing:0.02em; }
+
+  /* ================= CONTACT / BOOKING ================= */
+  .contact-section{
+    background:var(--navy); color:#fff; padding:84px 0; position:relative; overflow:hidden;
+  }
+  @media (max-width:640px){ .contact-section{ padding:56px 0; } }
+  .contact-section::before{
+    content:""; position:absolute; inset:0;
+    background:radial-gradient(700px 400px at 50% 120%, rgba(28,156,148,0.4), transparent 70%);
+  }
+  .contact-grid{ position:relative; z-index:2; display:grid; grid-template-columns:1fr 1fr; gap:52px; align-items:start; }
+  @media (max-width:860px){ .contact-grid{ grid-template-columns:1fr; gap:32px; } }
+  .contact-copy .sec-eyebrow{ color:var(--teal-light); }
+  .contact-copy h2{ font-size:clamp(26px,3.6vw,38px); font-weight:700; margin-top:8px; }
+  .contact-copy > p{ margin-top:14px; color:#c6d3d2; font-size:15.5px; line-height:1.7; max-width:440px; }
+  .contact-direct{ display:flex; gap:12px; margin-top:26px; flex-wrap:wrap; }
+  .contact-direct .cta-btn.outline{ border:1px solid rgba(255,255,255,0.35); color:#fff; background:transparent; }
+  .contact-direct .cta-btn.outline:hover{ background:rgba(255,255,255,0.08); }
+  .contact-direct .cta-btn.primary{ background:var(--brick); border-color:var(--brick); }
+  .contact-direct .cta-btn.primary:hover{ background:var(--brick-light); border-color:var(--brick-light); }
+
+  .contact-form{
+    background:var(--paper-2); border-radius:10px; padding:28px 26px; color:var(--ink);
+    box-shadow:0 30px 60px -20px rgba(0,0,0,0.5);
+    display:flex; flex-direction:column; gap:16px;
+  }
+  @media (max-width:480px){ .contact-form{ padding:22px 18px; } }
+  .contact-form .field{ display:flex; flex-direction:column; gap:6px; }
+  .contact-form label{ font-size:12.5px; font-weight:600; color:var(--ink-soft); }
+  .contact-form input{
+    border:1px solid var(--line); border-radius:6px; padding:12px 13px;
+    font-size:14.5px; font-family:'Inter',sans-serif; color:var(--ink); background:#fff;
+    width:100%;
+  }
+  .contact-form input::placeholder{ color:#9aa6a7; }
+  .form-note{ font-size:12px; color:var(--ink-soft); margin-top:-6px; }
+  .form-submit{ width:100%; justify-content:center; margin-top:2px; background:var(--brick); border-color:var(--brick); }
+  .form-submit:hover{ background:var(--brick-light); border-color:var(--brick-light); }
+
+  /* ================= FOOTER ================= */
+  footer{ background:#0d1c25; color:#8aa0a0; padding:52px 0 26px; }
+  .foot-grid{ display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:36px; }
+  @media (max-width:760px){ .foot-grid{ grid-template-columns:1fr; gap:30px; } }
+  .foot-grid h5{ font-family:'Poppins',sans-serif; font-weight:600; font-size:13px; letter-spacing:0.01em; color:#fff; margin-bottom:16px; }
+  .foot-grid p, .foot-grid a{ font-size:14px; line-height:1.9; color:#8aa0a0; }
+  .foot-grid a:hover{ color:var(--teal-light); }
+  .foot-brand{ display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+  .foot-brand span{ font-family:'Poppins',sans-serif; font-weight:700; color:#fff; font-size:16px; }
+  .foot-bottom{ margin-top:40px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; font-size:12px; letter-spacing:0.01em; flex-wrap:wrap; gap:10px; }
+
+  /* whatsapp float */
+  .wa-float{
+    position:fixed; right:22px; bottom:22px; z-index:60;
+    width:56px; height:56px; border-radius:50%;
+    background:#1c9c94; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 10px 24px -6px rgba(0,0,0,0.4);
+    transition:transform .2s ease;
+  }
+
+  .wa-float:hover{ transform:scale(1.07); }
+  .wa-float svg{ width:26px; height:26px; color:#fff; }
+
+  @media (max-width:480px){
+    .wa-float{ width:48px; height:48px; right:16px; bottom:16px; }
+    .wa-float svg{ width:22px; height:22px; }
+  }
+
+  @media (max-width: 640px) {
+    /* 1. Incrementa el padding lateral específicamente en el hero */
+    .hero .wrap {
+      padding-left: 40px;  /* Puedes aumentar o disminuir este valor a tu gusto */
+      padding-right: 40px; 
+    }
+
+    /* 2. Mantiene las ondas (SVG) ancladas a la parte inferior */
+    .hero-wave {
+      top: auto;       /* Anula el anclaje superior heredado del 'inset: 0' */
+      bottom: 0;       /* Asegura que el gráfico se quede abajo */
+      height: 45%;     /* Limita el alto para que la onda no cubra el texto (puedes ajustarlo entre 30% y 50%) */
+    }
+  }
+
+  @media (max-width: 860px) {
+    .nav-actions .cta-btn {
+      height: 40px;           /* Igualamos a la altura exacta de la hamburguesa */
+      padding-top: 0;         /* Retiramos el relleno vertical... */
+      padding-bottom: 0;      /* ...para que el flexbox centre el texto automáticamente */
+      padding-left: 10px;     /* Reducimos un poco los lados para ahorrar espacio en celular */
+      padding-right: 0px;
+    }
+  }
+
+</style>
+</head>
+<body>
+
+<!-- ================= HEADER ================= -->
+<header>
+  <div class="wrap nav">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 48 48" fill="none">
+        <path d="M6 24 L24 8 L42 24" stroke="#1c9c94" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M12 22 V40 H36 V22" stroke="#1c9c94" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="21" cy="30" r="3.4" stroke="#a83a2c" stroke-width="2.4"/>
+        <path d="M27 33 L33 39" stroke="#a83a2c" stroke-width="2.6" stroke-linecap="round"/>
+      </svg>
+      <div class="brand-text">
+        <div class="b1">Servicio Americano SPA</div>
+        <div class="b2">SERVICIO TÉCNICO ESPECIALIZADO</div>
+      </div>
+    </div>
+    <nav class="links">
+      <a href="#servicios">Servicios</a>
+      <a href="#proceso">Cómo trabajamos</a>
+      <a href="#garantia">Garantía</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+    <div class="nav-actions">
+      <a class="cta-btn" href="#contacto">Pedir visita</a>
+      <button class="burger" id="burgerBtn" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobileMenu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </div>
+  <nav class="mobile-menu" id="mobileMenu">
+    <a href="#servicios">Servicios</a>
+    <a href="#proceso">Cómo trabajamos</a>
+    <a href="#garantia">Garantía</a>
+    <a href="#contacto">Contacto</a>
+  </nav>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <svg class="hero-wave" viewBox="0 0 1180 620" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,420 C220,340 340,520 620,440 C860,370 980,240 1180,300 L1180,620 L0,620 Z" fill="#0f2b34"/>
+    <path d="M0,480 C260,400 420,560 700,480 C920,420 1020,320 1180,380 L1180,620 L0,620 Z" fill="#123a3a" opacity="0.85"/>
+    <path d="M0,540 C300,470 500,600 780,540 C960,500 1060,430 1180,470 L1180,620 L0,620 Z" fill="#1c9c94" opacity="0.28"/>
+  </svg>
+
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow"><span class="dot"></span> Técnicos certificados · Las Condes y Región Metropolitana</div>
+      <h1>Su electrodoméstico,<br><span class="accent">funcionando</span> como el primer día.</h1>
+      <p class="lede">Reparamos lavadoras, secadoras, aire acondicionado, refrigeración y cámaras de frío — en todas sus marcas. Diagnóstico honesto, repuestos originales y garantía por escrito.</p>
+      <div class="hero-ctas">
+        <a class="cta-btn primary" href="#contacto">Solicitar diagnóstico</a>
+        <a class="cta-btn outline" href="#servicios">Ver servicios</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hstat"><div class="num">15+</div><div class="lab">Años en el oficio</div></div>
+        <div class="hstat"><div class="num">24h</div><div class="lab">Respuesta promedio</div></div>
+        <div class="hstat"><div class="num">100%</div><div class="lab">Marcas atendidas</div></div>
+      </div>
+    </div>
+
+    <div class="card-panel">
+      <div class="cp-top">
+        <svg class="cp-mark" viewBox="0 0 48 48" fill="none">
+          <path d="M6 24 L24 8 L42 24" stroke="#0b6b6a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 22 V40 H36 V22" stroke="#0b6b6a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="21" cy="30" r="3.4" stroke="#a83a2c" stroke-width="2.4"/>
+          <path d="M27 33 L33 39" stroke="#a83a2c" stroke-width="2.6" stroke-linecap="round"/>
+        </svg>
+        <div>
+          <div class="cp-title">Servicio Americano SPA</div>
+          <div class="cp-sub">PANEL DE SERVICIOS · EN LÍNEA</div>
+        </div>
+      </div>
+      <div class="cp-divider"></div>
+      <div class="cp-services">
+        <div class="cp-row on"><span class="cp-led"></span> Lavadoras — todas las marcas</div>
+        <div class="cp-row on"><span class="cp-led"></span> Secadoras — todas las marcas</div>
+        <div class="cp-row on"><span class="cp-led"></span> Aire acondicionado</div>
+        <div class="cp-row on"><span class="cp-led"></span> Refrigeración</div>
+        <div class="cp-row on"><span class="cp-led"></span> Cámaras de frío</div>
+      </div>
+      <div class="cp-foot">
+        <span class="cp-tag">Disponibilidad</span>
+        <span class="cp-tag" style="color:#0b6b6a;">Lun – Sáb</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TRUST STRIP ================= -->
+<div class="strip">
+  <div class="wrap">
+    <div class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg> <b>Garantía escrita</b>&nbsp;en cada reparación</div>
+    <div class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg> <b>Repuestos originales</b>&nbsp;o equivalentes certificados</div>
+    <div class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> <b>Visita técnica</b>&nbsp;el mismo día en casos urgentes</div>
+  </div>
+</div>
+
+<!-- ================= SERVICIOS ================= -->
+<section class="section" id="servicios">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-eyebrow">Qué reparamos</span>
+      <h2>Un panel de servicio para cada equipo de su casa o negocio.</h2>
+      <p>Cada línea está atendida por un técnico con experiencia específica en esa marca y ese sistema — no enviamos un generalista a resolver un problema especializado.</p>
+    </div>
+
+    <div class="panel-board">
+      <div class="panel-grid">
+
+        <div class="svc">
+          <div class="svc-top"><span class="svc-code">01 / LAV</span><span class="svc-led"></span></div>
+          <svg class="svc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="14" r="5"/><circle cx="12" cy="14" r="2"/><circle cx="7" cy="6.5" r="0.8" fill="currentColor" stroke="none"/><circle cx="10" cy="6.5" r="0.8" fill="currentColor" stroke="none"/></svg>
+          <h3>Lavadoras</h3>
+          <p>Fugas, ruidos, no centrifuga, no enciende, tarjetas electrónicas y sistemas de carga frontal y superior.</p>
+          <div class="brands">LG · SAMSUNG · WHIRLPOOL · MABE</div>
+        </div>
+
+        <div class="svc">
+          <div class="svc-top"><span class="svc-code">02 / SEC</span><span class="svc-led"></span></div>
+          <svg class="svc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 14c0-1.5 1-2 2-2s1.5 1 2.5 1 1.5-1 2.5-1"/><circle cx="12" cy="15.5" r="4.2"/></svg>
+          <h3>Secadoras</h3>
+          <p>No calienta, ciclos incompletos, correas y resistencias, mantenimiento de ductos y sensores de humedad.</p>
+          <div class="brands">LG · SAMSUNG · WHIRLPOOL · MABE</div>
+        </div>
+
+        <div class="svc">
+          <div class="svc-top"><span class="svc-code">03 / A/C</span><span class="svc-led"></span></div>
+          <svg class="svc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="8" rx="1.5"/><path d="M6 17l1-3M11 17l1-3M16 17l1-3"/></svg>
+          <h3>Aire acondicionado</h3>
+          <p>Instalación, recarga de gas, limpieza de filtros y evaporadora, mantenimiento preventivo tipo split e inverter.</p>
+          <div class="brands">LG · MIDEA · YORK · CARRIER</div>
+        </div>
+
+        <div class="svc">
+          <div class="svc-top"><span class="svc-code">04 / REF</span><span class="svc-led"></span></div>
+          <svg class="svc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="2" width="14" height="20" rx="1.5"/><path d="M5 11h14"/><path d="M8 5v3M8 14v3"/></svg>
+          <h3>Refrigeración</h3>
+          <p>Neveras que no enfrían, fugas de gas, termostatos, compresores y sellado de empaques.</p>
+          <div class="brands">MABE · WHIRLPOOL · SAMSUNG · LG</div>
+        </div>
+
+        <div class="svc">
+          <div class="svc-top"><span class="svc-code">05 / CFR</span><span class="svc-led"></span></div>
+          <svg class="svc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 9h16v10H4z"/><path d="M4 9l4-5h8l4 5"/><path d="M12 13v3M10 14.5h4"/></svg>
+          <h3>Cámaras de frío</h3>
+          <p>Mantenimiento y reparación para restaurantes, tiendas y negocios — cuartos fríos, exhibidores y neveras industriales.</p>
+          <div class="brands">EQUIPOS COMERCIALES · TODAS LAS MARCAS</div>
+        </div>
+
+        <div class="svc">
+          <div class="svc-top"><span class="svc-code">06 / MTO</span><span class="svc-led"></span></div>
+          <svg class="svc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.34 1.87l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.7 1.7 0 00-1.87-.34 1.7 1.7 0 00-1 1.55V21a2 2 0 11-4 0v-.09a1.7 1.7 0 00-1-1.55 1.7 1.7 0 00-1.87.34l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.7 1.7 0 004.6 15a1.7 1.7 0 00-1.55-1H3a2 2 0 110-4h.09A1.7 1.7 0 004.6 9a1.7 1.7 0 00-.34-1.87l-.06-.06a2 2 0 112.83-2.83l.06.06A1.7 1.7 0 009 4.6a1.7 1.7 0 001-1.55V3a2 2 0 114 0v.09a1.7 1.7 0 001 1.55 1.7 1.7 0 001.87-.34l.06-.06a2 2 0 112.83 2.83l-.06.06A1.7 1.7 0 0019.4 9a1.7 1.7 0 001.55 1H21a2 2 0 110 4h-.09a1.7 1.7 0 00-1.55 1z"/></svg>
+          <h3>Mantenimiento preventivo</h3>
+          <p>Planes periódicos para hogares y negocios: menos daños imprevistos, más vida útil de sus equipos.</p>
+          <div class="brands">PLANES MENSUALES Y TRIMESTRALES</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROCESO ================= -->
+<section class="section tight" id="proceso">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-eyebrow">Cómo trabajamos</span>
+      <h2>Cuatro pasos, sin sorpresas en la factura.</h2>
+    </div>
+    <div class="process">
+      <div class="step">
+        <div class="num">01</div>
+        <h4>Diagnóstico</h4>
+        <p>Un técnico revisa el equipo en su casa o negocio e identifica la falla real, no solo el síntoma.</p>
+      </div>
+      <div class="step">
+        <div class="num">02</div>
+        <h4>Cotización</h4>
+        <p>Le explicamos qué encontramos y cuánto cuesta arreglarlo, antes de tocar una sola pieza.</p>
+      </div>
+      <div class="step">
+        <div class="num">03</div>
+        <h4>Reparación</h4>
+        <p>Trabajamos con repuestos adecuados y probamos el equipo en funcionamiento real antes de irnos.</p>
+      </div>
+      <div class="step">
+        <div class="num">04</div>
+        <h4>Garantía</h4>
+        <p>Entregamos garantía por escrito sobre la mano de obra y las piezas instaladas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= GARANTÍA ================= -->
+<section class="section" id="garantia">
+  <div class="wrap split">
+    <div class="visual">
+      <svg viewBox="0 0 200 200" fill="none">
+        <path d="M100 20 L170 50 V100 C170 145 140 175 100 190 C60 175 30 145 30 100 V50 Z" stroke="#5fd4c4" stroke-width="3"/>
+        <path d="M70 100 L92 122 L134 78" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div>
+      <span class="sec-eyebrow">Respaldo</span>
+      <h2 style="font-size:clamp(26px,3.4vw,36px); color:var(--navy); font-weight:700;">Trabajo garantizado, técnicos identificados.</h2>
+      <p style="margin-top:14px; color:var(--ink-soft); font-size:15px; line-height:1.65;">No dejamos su equipo peor de lo que lo encontramos. Cada visita queda documentada y respaldada.</p>
+      <ul>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg> <span><b>Garantía por escrito</b> en mano de obra y repuestos instalados.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg> <span><b>Cotización previa</b> — usted decide antes de que reparemos.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg> <span><b>Técnicos identificados</b> con carné y uniforme de la empresa.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TESTIMONIOS ================= -->
+<section class="section tight">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-eyebrow">Clientes</span>
+      <h2>Lo que dicen quienes ya nos llamaron.</h2>
+    </div>
+    <div class="testi-row">
+      <div class="testi">
+        <div class="stars">★★★★★</div>
+        <p>Llegaron el mismo día, explicaron la falla de la lavadora con calma y el precio fue el que cotizaron. Sin cobros extra.</p>
+        <div class="who">M. RESTREPO — LAS CONDES</div>
+      </div>
+      <div class="testi">
+        <div class="stars">★★★★★</div>
+        <p>Le hacen mantenimiento a la cámara fría de mi negocio cada tres meses. Desde entonces no hemos perdido mercancía.</p>
+        <div class="who">RESTAURANTE EL FOGÓN</div>
+      </div>
+      <div class="testi">
+        <div class="stars">★★★★★</div>
+        <p>El aire acondicionado de la oficina llevaba meses fallando. Lo dejaron funcionando en una sola visita.</p>
+        <div class="who">J. TABARES — PROVIDENCIA</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTACTO / AGENDAMIENTO ================= -->
+<section class="contact-section" id="contacto">
+  <div class="wrap contact-grid">
+    <div class="contact-copy">
+      <span class="sec-eyebrow">Contacto</span>
+      <h2>¿Su equipo necesita revisión?</h2>
+      <p>Cuéntenos su comuna y el electrodoméstico con falla — le confirmamos disponibilidad de visita técnica hoy mismo. O si prefiere, contáctenos directo:</p>
+      <div class="contact-direct">
+        <a class="cta-btn primary" href="https://wa.me/56959986627?text=Hola%2C%20necesito%20servicio%20t%C3%A9cnico" target="_blank" rel="noopener">Escribir por WhatsApp</a>
+        <a class="cta-btn outline" href="tel:+56959986627">Llamar ahora</a>
+      </div>
+    </div>
+    <form class="contact-form" onsubmit="return false;">
+      <div class="field">
+        <label for="f-nombre">Nombre completo</label>
+        <input id="f-nombre" type="text" placeholder="Ej. María Pérez" required>
+      </div>
+      <div class="field">
+        <label for="f-comuna">Comuna</label>
+        <input id="f-comuna" type="text" placeholder="Ej. Las Condes" required>
+      </div>
+      <div class="field">
+        <label for="f-equipo">Electrodoméstico con falla</label>
+        <input id="f-equipo" type="text" placeholder="Lavadora, secadora, aire acondicionado…" required>
+      </div>
+      <button type="submit" class="cta-btn form-submit">Agendar cita</button>
+      <p class="form-note">Le confirmamos por WhatsApp o llamada, según lo que prefiera.</p>
+    </form>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap foot-grid">
+    <div>
+      <div class="foot-brand">
+        <svg width="30" height="30" viewBox="0 0 48 48" fill="none">
+          <path d="M6 24 L24 8 L42 24" stroke="#5fd4c4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 22 V40 H36 V22" stroke="#5fd4c4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Servicio Americano SPA</span>
+      </div>
+      <p style="max-width:280px;">Reparación de lavadoras, secadoras, aire acondicionado, refrigeración y cámara de frío — en todas sus marcas.</p>
+    </div>
+    <div>
+      <h5>Servicios</h5>
+      <p><a href="#servicios">Lavadoras</a></p>
+      <p><a href="#servicios">Secadoras</a></p>
+      <p><a href="#servicios">Aire acondicionado</a></p>
+      <p><a href="#servicios">Refrigeración</a></p>
+      <p><a href="#servicios">Cámaras de frío</a></p>
+    </div>
+    <div>
+      <h5>Contacto</h5>
+      <p><a href="tel:+56959986627">+56 9 5998 6627</a></p>
+      <p><a href="mailto:contacto@servicioamericanospa.cl">contacto@servicioamericanospa.cl</a></p>
+      <p>Alonso de Córdova 5870, Las Condes — Santiago</p>
+      <p>Lun – Sáb · 8:00 a.m. – 6:00 p.m.</p>
+    </div>
+  </div>
+  <div class="wrap foot-bottom">
+    <span>© 2026 Servicio Americano SPA. Todos los derechos reservados.</span>
+    <span>Servicio técnico especializado</span>
+  </div>
+</footer>
+
+<a class="wa-float" href="https://wa.me/56959986627?text=Hola%2C%20necesito%20servicio%20t%C3%A9cnico" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.87.5 3.63 1.44 5.15L2 22l5.09-1.53a9.87 9.87 0 004.95 1.33h.01c5.46 0 9.9-4.45 9.9-9.9C21.95 6.45 17.5 2 12.04 2zm5.78 14.13c-.24.68-1.4 1.3-1.94 1.38-.5.08-1.13.11-1.82-.11-.42-.13-.96-.31-1.65-.6-2.9-1.25-4.8-4.17-4.94-4.36-.14-.19-1.18-1.57-1.18-3 0-1.42.75-2.12 1.02-2.41.27-.29.58-.36.78-.36h.56c.18 0 .42-.07.66.5.24.58.82 2 .89 2.14.07.15.12.32.02.51-.1.19-.15.31-.29.48-.15.17-.31.38-.44.51-.15.15-.3.31-.13.6.17.29.75 1.24 1.61 2.01 1.11.99 2.04 1.3 2.33 1.45.29.15.46.13.63-.08.17-.2.72-.84.91-1.13.19-.29.38-.24.63-.14.26.1 1.65.78 1.93.92.29.15.48.22.55.34.07.13.07.72-.17 1.4z"/></svg>
+</a>
+
+<script>
+  var burgerBtn = document.getElementById('burgerBtn');
+  var mobileMenu = document.getElementById('mobileMenu');
+  if (burgerBtn && mobileMenu) {
+    burgerBtn.addEventListener('click', function () {
+      var isOpen = mobileMenu.classList.toggle('open');
+      burgerBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+    var menuLinks = mobileMenu.querySelectorAll('a');
+    for (var i = 0; i < menuLinks.length; i++) {
+      menuLinks[i].addEventListener('click', function () {
+        mobileMenu.classList.remove('open');
+        burgerBtn.setAttribute('aria-expanded', 'false');
+      });
+    }
+  }
+</script>
+
+</body>
+</html>

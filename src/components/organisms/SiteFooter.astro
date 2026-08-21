@@ -1,0 +1,64 @@
+---
+import Container from '../atoms/Container.astro';
+import Logo from '../atoms/Logo.astro';
+import { services } from '../../data/services';
+import { site } from '../../data/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-[#0d1c25] pt-[52px] pb-[26px] text-[#8aa0a0]">
+  <Container class="grid grid-cols-[1.4fr_1fr_1fr] gap-9 max-md:grid-cols-1 max-md:gap-[30px]">
+    <div>
+      <a href="#" class="mb-4 flex items-center gap-2.5" aria-label={`Inicio — ${site.name}`}>
+        <Logo tone="light" withMagnifier={false} class="h-[30px] w-[30px]" />
+        <span class="font-display text-base font-bold text-white">{site.name}</span>
+      </a>
+      <p class="max-w-[280px] text-sm leading-[1.9]">{site.description.split('.')[0]}.</p>
+    </div>
+
+    <nav aria-label="Servicios">
+      <h2 class="mb-4 font-display text-[13px] font-semibold tracking-[0.01em] text-white">
+        Servicios
+      </h2>
+      <ul>
+        {
+          services.slice(0, 5).map((service) => (
+            <li>
+              <a href="#servicios" class="text-sm leading-[1.9] transition-colors hover:text-teal-light">
+                {service.title}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div>
+      <h2 class="mb-4 font-display text-[13px] font-semibold tracking-[0.01em] text-white">
+        Contacto
+      </h2>
+      <ul class="text-sm leading-[1.9]">
+        <li>
+          <a href={`tel:${site.phone}`} class="transition-colors hover:text-teal-light">
+            {site.phoneDisplay}
+          </a>
+        </li>
+        <li>
+          <a href={`mailto:${site.email}`} class="break-all transition-colors hover:text-teal-light">
+            {site.email}
+          </a>
+        </li>
+        <li>{site.address}</li>
+        <li>{site.hours}</li>
+      </ul>
+    </div>
+  </Container>
+
+  <Container
+    class="mt-10 flex flex-wrap justify-between gap-2.5 border-t border-white/[0.08] pt-5 text-xs tracking-[0.01em]"
+  >
+    <span>© {year} {site.name}. Todos los derechos reservados.</span>
+    <span>{site.tagline}</span>
+  </Container>
+</footer>

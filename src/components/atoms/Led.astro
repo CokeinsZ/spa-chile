@@ -1,0 +1,16 @@
+---
+/** Indicador luminoso de estado (panel de servicios). */
+interface Props {
+  on?: boolean;
+  class?: string;
+}
+
+const { on = false, class: className } = Astro.props;
+---
+
+<span
+  class:list={[
+    'h-2 w-2 shrink-0 rounded-full transition-all duration-300',
+    on ? 'bg-led-on shadow-[0_0_8px_1px_rgba(62,224,143,0.7)]' : 'bg-led-off',
+    className,
+  ]}></span>

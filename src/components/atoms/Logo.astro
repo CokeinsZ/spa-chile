@@ -1,0 +1,43 @@
+---
+/**
+ * Isotipo de la marca: casa + lupa de diagnóstico.
+ * `tone` controla el color del trazo según el fondo donde se use.
+ */
+interface Props {
+  class?: string;
+  tone?: 'teal' | 'teal-deep' | 'light';
+  /** El pie de página usa la marca sin la lupa. */
+  withMagnifier?: boolean;
+}
+
+const { class: className, tone = 'teal', withMagnifier = true } = Astro.props;
+
+const tones = {
+  teal: '#1c9c94',
+  'teal-deep': '#0b6b6a',
+  light: '#5fd4c4',
+} as const;
+---
+
+<svg class={className} viewBox="0 0 48 48" fill="none" aria-hidden="true">
+  <path
+    d="M6 24 L24 8 L42 24"
+    stroke={tones[tone]}
+    stroke-width="3"
+    stroke-linecap="round"
+    stroke-linejoin="round"></path>
+  <path
+    d="M12 22 V40 H36 V22"
+    stroke={tones[tone]}
+    stroke-width="3"
+    stroke-linecap="round"
+    stroke-linejoin="round"></path>
+  {
+    withMagnifier && (
+      <>
+        <circle cx="21" cy="30" r="3.4" stroke="#a83a2c" stroke-width="2.4" />
+        <path d="M27 33 L33 39" stroke="#a83a2c" stroke-width="2.6" stroke-linecap="round" />
+      </>
+    )
+  }
+</svg>

@@ -1,0 +1,12 @@
+---
+/** Rótulo pequeño que antecede a los títulos de sección. */
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<span class:list={['mb-3 block text-[12.5px] font-semibold tracking-[0.01em] text-brick', className]}>
+  <slot />
+</span>

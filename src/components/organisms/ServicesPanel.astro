@@ -1,0 +1,26 @@
+---
+import Container from '../atoms/Container.astro';
+import SectionHeading from '../molecules/SectionHeading.astro';
+import ServiceCard from '../molecules/ServiceCard.astro';
+import { services } from '../../data/services';
+---
+
+<section id="servicios" class="py-[88px] max-sm:py-14">
+  <Container>
+    <SectionHeading
+      eyebrow="Qué reparamos"
+      title="Un panel de servicio para cada equipo de su casa o negocio."
+      description="Cada línea está atendida por un técnico con experiencia específica en esa marca y ese sistema — no enviamos un generalista a resolver un problema especializado."
+    />
+
+    <div
+      class="rounded-[10px] bg-navy p-2 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]"
+    >
+      <div
+        class="grid grid-cols-3 gap-0.5 overflow-hidden rounded-lg bg-white/[0.06] max-[820px]:grid-cols-2 max-[520px]:grid-cols-1"
+      >
+        {services.map((service) => <ServiceCard {...service} />)}
+      </div>
+    </div>
+  </Container>
+</section>

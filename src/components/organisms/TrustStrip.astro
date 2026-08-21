@@ -1,0 +1,17 @@
+---
+import Container from '../atoms/Container.astro';
+import TrustItem from '../molecules/TrustItem.astro';
+import type { IconName } from '../../data/icons';
+
+const items: { icon: IconName; label: string; text: string }[] = [
+  { icon: 'check-circle', label: 'Garantía escrita', text: 'en cada reparación' },
+  { icon: 'badge', label: 'Repuestos originales', text: 'o equivalentes certificados' },
+  { icon: 'clock', label: 'Visita técnica', text: 'el mismo día en casos urgentes' },
+];
+---
+
+<div class="border-b border-line bg-paper-2 py-5">
+  <Container class="flex flex-wrap items-center justify-between gap-x-8 gap-y-4">
+    {items.map((item) => <TrustItem {...item} />)}
+  </Container>
+</div>

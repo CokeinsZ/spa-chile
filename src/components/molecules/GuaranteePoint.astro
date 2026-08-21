@@ -1,0 +1,16 @@
+---
+import Icon from '../atoms/Icon.astro';
+
+/** Ítem del listado de garantías (check + texto). */
+interface Props {
+  label: string;
+  text: string;
+}
+
+const { label, text } = Astro.props;
+---
+
+<li class="flex items-start gap-3 text-[15px] text-ink-soft">
+  <Icon name="check-circle" class="mt-0.5 h-[18px] w-[18px] shrink-0 text-teal-deep" />
+  <span><strong class="font-semibold text-ink">{label}</strong> {text}</span>
+</li>

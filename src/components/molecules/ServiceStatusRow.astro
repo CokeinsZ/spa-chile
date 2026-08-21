@@ -1,0 +1,16 @@
+---
+import Led from '../atoms/Led.astro';
+
+/** Fila del panel de servicios del hero (LED + línea atendida). */
+interface Props {
+  label: string;
+  on?: boolean;
+}
+
+const { label, on = true } = Astro.props;
+---
+
+<div class="flex items-center gap-2.5 text-[13px] text-ink-soft">
+  <Led on={on} />
+  {label}
+</div>

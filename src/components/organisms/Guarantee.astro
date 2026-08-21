@@ -1,0 +1,48 @@
+---
+import Container from '../atoms/Container.astro';
+import Eyebrow from '../atoms/Eyebrow.astro';
+import GuaranteePoint from '../molecules/GuaranteePoint.astro';
+
+const points = [
+  { label: 'Garantía por escrito', text: 'en mano de obra y repuestos instalados.' },
+  { label: 'Cotización previa', text: '— usted decide antes de que reparemos.' },
+  { label: 'Técnicos identificados', text: 'con carné y uniforme de la empresa.' },
+];
+---
+
+<section id="garantia" class="py-[88px] max-sm:py-14">
+  <Container class="grid grid-cols-2 items-center gap-14 max-[860px]:grid-cols-1 max-[860px]:gap-8">
+    {/* Visual decorativo: escudo de garantía */}
+    <div
+      class="flex aspect-[4/3] items-center justify-center overflow-hidden rounded-[10px] bg-gradient-to-br from-teal-deep from-0% to-navy to-70%"
+      aria-hidden="true"
+    >
+      <svg class="h-[56%] w-[56%]" viewBox="0 0 200 200" fill="none">
+        <path
+          d="M100 20 L170 50 V100 C170 145 140 175 100 190 C60 175 30 145 30 100 V50 Z"
+          stroke="#5fd4c4"
+          stroke-width="3"></path>
+        <path
+          d="M70 100 L92 122 L134 78"
+          stroke="#ffffff"
+          stroke-width="6"
+          stroke-linecap="round"
+          stroke-linejoin="round"></path>
+      </svg>
+    </div>
+
+    <div>
+      <Eyebrow>Respaldo</Eyebrow>
+      <h2 class="font-display text-[clamp(26px,3.4vw,36px)] font-bold text-navy">
+        Trabajo garantizado, técnicos identificados.
+      </h2>
+      <p class="mt-3.5 text-[15px] leading-[1.65] text-ink-soft">
+        No dejamos su equipo peor de lo que lo encontramos. Cada visita queda documentada y
+        respaldada.
+      </p>
+      <ul class="mt-5 flex flex-col gap-3.5">
+        {points.map((point) => <GuaranteePoint {...point} />)}
+      </ul>
+    </div>
+  </Container>
+</section>

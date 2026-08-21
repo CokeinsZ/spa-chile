@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+/*
+ * Tokens de diseño — paleta de Servicio Americano SPA
+ * (portada desde el mockup original)
+ */
+@theme {
+  --color-navy: #122430;
+  --color-navy-2: #1a3442;
+  --color-teal-deep: #0b6b6a;
+  --color-teal: #1c9c94;
+  --color-teal-light: #5fd4c4;
+  --color-paper: #f6f4ee;
+  --color-paper-2: #ffffff;
+  --color-ink: #132022;
+  --color-ink-soft: #4d5c5e;
+  --color-brick: #a83a2c;
+  --color-brick-light: #c65742;
+  --color-led-off: #2a3f42;
+  --color-led-on: #3ee08f;
+  --color-line: rgb(19 32 34 / 0.12);
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Poppins", ui-sans-serif, system-ui, sans-serif;
+
+  --animate-pulse-dot: pulse-dot 2.4s ease-in-out infinite;
+
+  @keyframes pulse-dot {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.35;
+    }
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-paper font-sans text-ink antialiased;
+    overflow-wrap: break-word;
+  }
+
+  /* Compensa el header sticky al navegar a anclas */
+  section[id] {
+    scroll-margin-top: 104px;
+  }
+
+  @media (max-width: 640px) {
+    section[id] {
+      scroll-margin-top: 88px;
+    }
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-teal);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

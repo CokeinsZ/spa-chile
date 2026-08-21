@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/organisms/SiteHeader.astro';
+import Hero from '../components/organisms/Hero.astro';
+import TrustStrip from '../components/organisms/TrustStrip.astro';
+import ServicesPanel from '../components/organisms/ServicesPanel.astro';
+import ProcessSteps from '../components/organisms/ProcessSteps.astro';
+import Guarantee from '../components/organisms/Guarantee.astro';
+import Testimonials from '../components/organisms/Testimonials.astro';
+import ContactSection from '../components/organisms/ContactSection.astro';
+import SiteFooter from '../components/organisms/SiteFooter.astro';
+import WhatsAppFloat from '../components/organisms/WhatsAppFloat.astro';
+---
+
+<BaseLayout>
+  <SiteHeader />
+  <main>
+    <Hero />
+    <TrustStrip />
+    <ServicesPanel />
+    <ProcessSteps />
+    <Guarantee />
+    <Testimonials />
+    <ContactSection />
+  </main>
+  <SiteFooter />
+  <WhatsAppFloat />
+</BaseLayout>

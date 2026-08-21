@@ -1,0 +1,16 @@
+---
+import Container from '../atoms/Container.astro';
+import SectionHeading from '../molecules/SectionHeading.astro';
+import TestimonialCard from '../molecules/TestimonialCard.astro';
+import { testimonials } from '../../data/testimonials';
+---
+
+<section class="py-[72px] max-sm:py-12">
+  <Container>
+    <SectionHeading eyebrow="Clientes" title="Lo que dicen quienes ya nos llamaron." />
+
+    <div class="grid grid-cols-3 gap-[22px] max-[900px]:grid-cols-1">
+      {testimonials.map((testimonial) => <TestimonialCard {...testimonial} />)}
+    </div>
+  </Container>
+</section>

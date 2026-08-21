@@ -1,0 +1,29 @@
+{
+  "name": "servicio-americano-spa",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Sitio informativo de Servicio Americano SPA — servicio técnico de refrigeración y aires acondicionados",
+  "scripts": {
+    "dev": "astro dev",
+    "host": "astro dev --host",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/react": "^6.0.4",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^7.2.4",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "typescript": "^7.0.2"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true
+  }
+}

@@ -1,0 +1,18 @@
+---
+import Container from '../atoms/Container.astro';
+import SectionHeading from '../molecules/SectionHeading.astro';
+import ProcessStep from '../molecules/ProcessStep.astro';
+import { processSteps } from '../../data/process';
+---
+
+<section id="proceso" class="py-[72px] max-sm:py-12">
+  <Container>
+    <SectionHeading eyebrow="Cómo trabajamos" title="Cuatro pasos, sin sorpresas en la factura." />
+
+    <div
+      class="grid grid-cols-4 gap-px overflow-hidden rounded-lg border border-line bg-line max-[820px]:grid-cols-2 max-[520px]:grid-cols-1"
+    >
+      {processSteps.map((step) => <ProcessStep {...step} />)}
+    </div>
+  </Container>
+</section>
