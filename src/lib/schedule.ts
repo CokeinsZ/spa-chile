@@ -133,6 +133,11 @@ export function isBookableSlot(instant: Date): boolean {
   );
 }
 
+/** Día de la semana (0 = domingo) de una fecha de calendario, sin ambigüedad de zona horaria. */
+export function weekdayOfCalendarDate(year: number, month: number, day: number): number {
+  return new Date(Date.UTC(year, month - 1, day)).getUTCDay();
+}
+
 /** Parsea un parámetro `from=YYYY-MM-DD` como medianoche en Santiago. */
 export function parseDateParam(raw: string): Date | null {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(raw);

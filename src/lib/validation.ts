@@ -11,7 +11,6 @@ export const DEVICE_OPTIONS = [
   'Cámara de frío',
   'Lavadora',
   'Secadora',
-  'Otro',
 ] as const;
 
 export interface BookingPayload {

@@ -5,6 +5,9 @@ import {
   MIN_NOTICE_HOURS,
   SLOT_DURATION_HOURS,
   SLOT_HOURS,
+  getZonedParts,
+  santiagoToUtc,
+  weekdayOfCalendarDate,
 } from '../../lib/schedule';
 import { buttonClass } from '../atoms/buttonStyles';
 import { FormField } from '../molecules/FormField';
@@ -42,11 +45,11 @@ const initialValues: FormValues = {
 
 const HOUR_MS = 3_600_000;
 
-function toDateInputValue(date: Date): string {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const d = String(date.getDate()).padStart(2, '0');
-  return `${y}-${m}-${d}`;
+/** Fecha de calendario → "YYYY-MM-DD" (componentes, sin conversión de zona). */
+function toDateInputValue(year: number, month: number, day: number): string {
+  const m = String(month).padStart(2, '0');
+  const d = String(day).padStart(2, '0');
+  return `${year}-${m}-${d}`;
 }
 
 /** El servidor devuelve el error de horario como `scheduledAt`; se muestra en `time`. */
@@ -76,18 +79,24 @@ export default function BookingForm() {
     setErrors((current) => ({ ...current, [field]: undefined }));
   };
 
-  const today = useMemo(() => new Date(), []);
-  const minDate = toDateInputValue(today);
-  const maxDate = toDateInputValue(new Date(today.getTime() + MAX_BOOKING_DAYS * 24 * HOUR_MS));
+  // Los límites de fecha y los bloques se calculan en hora de Santiago
+  const [minDate, maxDate] = useMemo(() => {
+    const today = getZonedParts(new Date());
+    const limit = new Date(
+      Date.UTC(today.year, today.month - 1, today.day + MAX_BOOKING_DAYS, 12),
+    );
+    return [
+      toDateInputValue(today.year, today.month, today.day),
+      toDateInputValue(limit.getUTCFullYear(), limit.getUTCMonth() + 1, limit.getUTCDate()),
+    ];
+  }, []);
 
-  /** Bloques ofrecibles para la fecha elegida (domingo cerrado, hoy ≥ +4 h). */
   const timeOptions: SelectOption[] = useMemo(() => {
     if (!values.date) return [];
     const [y, m, d] = values.date.split('-').map(Number);
-    const chosen = new Date(y, m - 1, d);
-    if (chosen.getDay() === 0) return [];
+    if (weekdayOfCalendarDate(y, m, d) === 0) return [];
     const minStart = Date.now() + MIN_NOTICE_HOURS * HOUR_MS;
-    return SLOT_HOURS.filter((hour) => new Date(y, m - 1, d, hour).getTime() >= minStart).map(
+    return SLOT_HOURS.filter((hour) => santiagoToUtc(y, m, d, hour).getTime() >= minStart).map(
       (hour) => ({
         value: String(hour),
         label: `${String(hour).padStart(2, '0')}:00 – ${String(hour + SLOT_DURATION_HOURS).padStart(2, '0')}:00`,
@@ -98,7 +107,7 @@ export default function BookingForm() {
   const dateHint = useMemo(() => {
     if (!values.date) return undefined;
     const [y, m, d] = values.date.split('-').map(Number);
-    if (new Date(y, m - 1, d).getDay() === 0) return 'No atendemos los domingos.';
+    if (weekdayOfCalendarDate(y, m, d) === 0) return 'No atendemos los domingos.';
     if (timeOptions.length === 0)
       return 'Ya no quedan bloques con 4 h de anticipación para ese día; elige otra fecha.';
     return undefined;
@@ -109,8 +118,9 @@ export default function BookingForm() {
     setServerError('');
 
     const [y, m, d] = values.date.split('-').map(Number);
+    // El bloque elegido es hora de Santiago; no se usa la zona del navegador.
     const scheduledAt =
-      values.date && values.time ? new Date(y, m - 1, d, Number(values.time)).toISOString() : '';
+      values.date && values.time ? santiagoToUtc(y, m, d, Number(values.time)).toISOString() : '';
 
     const { errors: validationErrors, value } = validateBooking({
       fullName: values.fullName,

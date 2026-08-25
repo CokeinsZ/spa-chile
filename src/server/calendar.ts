@@ -9,6 +9,7 @@
  */
 import { google, type calendar_v3 } from 'googleapis';
 import { BOOKING_TZ, SLOT_DURATION_HOURS } from '../lib/schedule';
+import { env } from './env';
 
 export interface CalendarEventDetails {
   fullName: string;
@@ -21,13 +22,8 @@ export interface CalendarEventDetails {
   start: Date;
 }
 
-// process.env: las credenciales se leen en runtime, no en el build.
 export function isCalendarConfigured(): boolean {
-  return Boolean(
-    process.env.GOOGLE_CALENDAR_ID &&
-      process.env.GOOGLE_CLIENT_EMAIL &&
-      process.env.GOOGLE_PRIVATE_KEY,
-  );
+  return Boolean(env('GOOGLE_CALENDAR_ID') && env('GOOGLE_CLIENT_EMAIL') && env('GOOGLE_PRIVATE_KEY'));
 }
 
 let client: calendar_v3.Calendar | undefined;
@@ -35,9 +31,9 @@ let client: calendar_v3.Calendar | undefined;
 function getClient(): calendar_v3.Calendar {
   if (!client) {
     const auth = new google.auth.JWT({
-      email: process.env.GOOGLE_CLIENT_EMAIL,
+      email: env('GOOGLE_CLIENT_EMAIL'),
       // La key llega por env con "\n" escapados.
-      key: String(process.env.GOOGLE_PRIVATE_KEY).replace(/\\n/g, '\n'),
+      key: String(env('GOOGLE_PRIVATE_KEY')).replace(/\\n/g, '\n'),
       scopes: ['https://www.googleapis.com/auth/calendar'],
     });
     client = google.calendar({ version: 'v3', auth });
@@ -49,7 +45,7 @@ function getClient(): calendar_v3.Calendar {
 export async function createCalendarEvent(details: CalendarEventDetails): Promise<string> {
   const end = new Date(details.start.getTime() + SLOT_DURATION_HOURS * 3_600_000);
   const response = await getClient().events.insert({
-    calendarId: process.env.GOOGLE_CALENDAR_ID,
+    calendarId: env('GOOGLE_CALENDAR_ID'),
     requestBody: {
       summary: `Visita técnica — ${details.device} (${details.brand})`,
       location: `${details.address}, ${details.commune}`,
