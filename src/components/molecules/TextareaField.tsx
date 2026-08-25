@@ -1,53 +1,47 @@
-interface FormFieldProps {
+interface TextareaFieldProps {
   id: string;
   label: string;
   value: string;
   onChange: (value: string) => void;
-  type?: string;
   placeholder?: string;
   hint?: string;
   error?: string;
   required?: boolean;
+  rows?: number;
   maxLength?: number;
-  min?: string;
-  max?: string;
 }
 
-/** Campo de texto etiquetado con hint y mensaje de error. */
-export function FormField({
+/** Área de texto etiquetada con hint y mensaje de error. */
+export function TextareaField({
   id,
   label,
   value,
   onChange,
-  type = 'text',
   placeholder,
   hint,
   error,
   required = false,
+  rows = 3,
   maxLength,
-  min,
-  max,
-}: FormFieldProps) {
+}: TextareaFieldProps) {
   return (
     <div className="flex flex-col gap-1.5">
       <label htmlFor={id} className="text-[12.5px] font-semibold text-ink-soft">
         {label}
         {required && <span className="text-brick"> *</span>}
       </label>
-      <input
+      <textarea
         id={id}
         name={id}
-        type={type}
-        placeholder={placeholder}
         value={value}
         onChange={(event) => onChange(event.target.value)}
+        placeholder={placeholder}
         required={required}
+        rows={rows}
         maxLength={maxLength}
-        min={min}
-        max={max}
         aria-invalid={Boolean(error)}
         aria-describedby={error ? `${id}-error` : hint ? `${id}-hint` : undefined}
-        className={`w-full rounded-md border bg-white px-3.5 py-3 text-[14.5px] text-ink placeholder:text-[#9aa6a7] ${
+        className={`w-full resize-y rounded-md border bg-white px-3.5 py-3 text-[14.5px] text-ink placeholder:text-[#9aa6a7] ${
           error ? 'border-brick' : 'border-line'
         }`}
       />

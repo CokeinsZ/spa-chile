@@ -8,17 +8,23 @@
     "host": "astro dev --host",
     "build": "astro build",
     "preview": "astro preview",
+    "calendar:check": "node --env-file=.env scripts/check-calendar.mjs",
+    "start": "node --env-file=.env dist/server/entry.mjs",
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/node": "^11.1.4",
     "@astrojs/react": "^6.0.4",
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.2.4",
+    "googleapis": "^176.0.0",
+    "pg": "^8.23.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
+    "@types/pg": "^8.23.1",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "typescript": "^7.0.2"
