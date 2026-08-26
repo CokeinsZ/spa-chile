@@ -1,0 +1,36 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 4321
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-servicio_americano}:${POSTGRES_PASSWORD:-servicio_americano}@db:5432/${POSTGRES_DB:-servicio_americano}
+      GOOGLE_CALENDAR_ID: ${GOOGLE_CALENDAR_ID:-}
+      GOOGLE_CLIENT_EMAIL: ${GOOGLE_CLIENT_EMAIL:-}
+      GOOGLE_PRIVATE_KEY: ${GOOGLE_PRIVATE_KEY:-}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-servicio_americano}
+      POSTGRES_USER: ${POSTGRES_USER:-servicio_americano}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-servicio_americano}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+      - ./db.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
