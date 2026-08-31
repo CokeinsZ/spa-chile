@@ -27,6 +27,6 @@ export const processSteps: ProcessStep[] = [
     number: '04',
     title: 'Garantía',
     description:
-      'Entregamos garantía por escrito sobre la mano de obra y las piezas instaladas.',
+      'Entregamos facturación y poliza de garantía electrónica.',
   },
 ];

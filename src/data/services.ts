@@ -46,7 +46,7 @@ export const services: Service[] = [
     icon: 'cold-room',
     title: 'Cámaras de frío',
     description:
-      'Mantenimiento y reparación para restaurantes, tiendas y negocios — cuartos fríos, exhibidores y neveras industriales.',
+      'Fabricación, mantenimiento y reparación para restaurantes, tiendas y negocios — cuartos fríos, exhibidores y neveras industriales.',
     brands: 'EQUIPOS COMERCIALES · TODAS LAS MARCAS',
   },
   {
