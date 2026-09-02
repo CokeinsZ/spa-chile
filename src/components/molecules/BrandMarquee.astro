@@ -1,0 +1,43 @@
+---
+/**
+ * Carrusel infinito de marcas: desplazamiento continuo derecha → izquierda,
+ * puramente decorativo (sin interacción). El bucle perfecto se logra
+ * duplicando la lista y animando el track de 0 a -50%.
+ *
+ * Fondo blanco: la mayoría de los logos traen fondo blanco opaco y así se
+ * integran sin verse como recuadros. Los espaciados usan margin (no gap)
+ * para que el ancho total sea divisible exacto entre las dos copias.
+ */
+import { brands } from '../../data/brands';
+---
+
+<div
+  class="overflow-hidden rounded-[10px] border border-line bg-paper-2 py-6 [mask-image:linear-gradient(90deg,transparent,black_8%,black_92%,transparent)]"
+  aria-label="Marcas que reparamos"
+>
+  <div class="flex w-max animate-marquee">
+    {
+      brands.map((brand) => (
+        <img
+          src={brand.src}
+          alt={`Logo de ${brand.name}`}
+          loading="lazy"
+          decoding="async"
+          class="mr-16 h-12 w-auto object-contain max-sm:mr-10 max-sm:h-10"
+        />
+      ))
+    }
+    {
+      brands.map((brand) => (
+        <img
+          src={brand.src}
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          decoding="async"
+          class="mr-16 h-12 w-auto object-contain max-sm:mr-10 max-sm:h-10"
+        />
+      ))
+    }
+  </div>
+</div>

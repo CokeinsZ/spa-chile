@@ -8,8 +8,8 @@ export const site = {
   phoneDisplay: '+56 9 5998 6627',
   email: 'contacto@servicioamericanospa.cl',
   address: 'Alonso de Córdova 5870, Las Condes — Santiago',
-  hours: 'Lun – Sáb · 8:00 a.m. – 6:00 p.m.',
-  hoursShort: 'Lun – Sáb',
+  hours: 'Lun – Vie · 8:00 a.m. – 6:00 p.m.',
+  hoursShort: 'Lun – Vie',
 } as const;
 
 /** Construye un enlace de WhatsApp con mensaje prellenado. */

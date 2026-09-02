@@ -2,6 +2,7 @@
 import Container from '../atoms/Container.astro';
 import SectionHeading from '../molecules/SectionHeading.astro';
 import ServiceCard from '../molecules/ServiceCard.astro';
+import BrandMarquee from '../molecules/BrandMarquee.astro';
 import { services } from '../../data/services';
 ---
 
@@ -10,8 +11,12 @@ import { services } from '../../data/services';
     <SectionHeading
       eyebrow="Qué reparamos"
       title="Un paquete de servicio para cada equipo de su casa o negocio."
-      description="Cada línea está atendida por un técnico con experiencia específica en esa marca y ese sistema — no enviamos un generalista a resolver un problema especializado."
+      description="Cada línea está atendida por un técnico especializado con alta experiencia."
     />
+
+    <div class="mb-12">
+      <BrandMarquee />
+    </div>
 
     <div
       class="rounded-[10px] bg-navy p-2 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]"
