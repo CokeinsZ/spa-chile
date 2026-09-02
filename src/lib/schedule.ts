@@ -8,7 +8,7 @@
  */
 
 export const BOOKING_TZ = 'America/Santiago';
-/** Bloques de 2 h dentro de la jornada Lun–Sáb 8:00–18:00. */
+/** Bloques de 2 h dentro de la jornada Lun–Vie 8:00–18:00. */
 export const SLOT_HOURS = [8, 10, 12, 14, 16] as const;
 export const SLOT_DURATION_HOURS = 2;
 export const MIN_NOTICE_HOURS = 4;
@@ -16,7 +16,13 @@ export const MAX_BOOKING_DAYS = 30;
 
 const HOUR_MS = 3_600_000;
 const DAY_MS = 24 * HOUR_MS;
-const SUNDAY = 0;
+const MONDAY = 1;
+const FRIDAY = 5;
+
+/** Días hábiles del negocio: lunes a viernes. */
+export function isWorkingDay(weekday: number): boolean {
+  return weekday >= MONDAY && weekday <= FRIDAY;
+}
 
 interface ZonedParts {
   year: number;
@@ -97,7 +103,7 @@ export function bookingWindow(from?: Date): { start: Date; end: Date } {
   };
 }
 
-/** Todos los inicios de bloque candidatos dentro de la ventana (lun–sáb, horas fijas). */
+/** Todos los inicios de bloque candidatos dentro de la ventana (lun–vie, horas fijas). */
 export function listCandidateSlots(start: Date, end: Date): Date[] {
   const slots: Date[] = [];
   const first = getZonedParts(start);
@@ -108,7 +114,7 @@ export function listCandidateSlots(start: Date, end: Date): Date[] {
 
   for (let i = 0; i <= totalDays; i++) {
     const dayDate = new Date(Date.UTC(first.year, first.month - 1, first.day + i));
-    if (dayDate.getUTCDay() === SUNDAY) continue;
+    if (!isWorkingDay(dayDate.getUTCDay())) continue;
     const y = dayDate.getUTCFullYear();
     const m = dayDate.getUTCMonth() + 1;
     const d = dayDate.getUTCDate();
@@ -120,14 +126,14 @@ export function listCandidateSlots(start: Date, end: Date): Date[] {
   return slots.sort((a, b) => a.getTime() - b.getTime());
 }
 
-/** ¿Es un instante agendable? (alineado a bloque, día hábil, dentro de la ventana). */
+/** ¿Es un instante agendable? (alineado a bloque, día hábil lun–vie, dentro de la ventana). */
 export function isBookableSlot(instant: Date): boolean {
   if (Number.isNaN(instant.getTime())) return false;
   const { start, end } = bookingWindow();
   if (instant < start || instant > end) return false;
   const parts = getZonedParts(instant);
   return (
-    parts.weekday !== SUNDAY &&
+    isWorkingDay(parts.weekday) &&
     parts.minute === 0 &&
     (SLOT_HOURS as readonly number[]).includes(parts.hour)
   );

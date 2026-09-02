@@ -105,7 +105,7 @@ export function validateBooking(input: unknown): { errors: BookingErrors; value:
   const instant = new Date(scheduledAt);
   if (!scheduledAt || Number.isNaN(instant.getTime()) || !isBookableSlot(instant)) {
     errors.scheduledAt =
-      'Elige un horario válido: lunes a sábado, bloques de 2 h entre 8:00 y 18:00, con al menos 4 h de anticipación.';
+      'Elige un horario válido: lunes a viernes, bloques de 2 h entre 8:00 y 18:00, con al menos 4 h de anticipación.';
   }
 
   if (Object.keys(errors).length > 0) return { errors, value: null };

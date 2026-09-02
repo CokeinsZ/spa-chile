@@ -6,6 +6,7 @@ import {
   SLOT_DURATION_HOURS,
   SLOT_HOURS,
   getZonedParts,
+  isWorkingDay,
   santiagoToUtc,
   weekdayOfCalendarDate,
 } from '../../lib/schedule';
@@ -91,10 +92,11 @@ export default function BookingForm() {
     ];
   }, []);
 
+  /** Bloques ofrecibles para la fecha elegida (solo lun–vie, hoy ≥ +4 h). */
   const timeOptions: SelectOption[] = useMemo(() => {
     if (!values.date) return [];
     const [y, m, d] = values.date.split('-').map(Number);
-    if (weekdayOfCalendarDate(y, m, d) === 0) return [];
+    if (!isWorkingDay(weekdayOfCalendarDate(y, m, d))) return [];
     const minStart = Date.now() + MIN_NOTICE_HOURS * HOUR_MS;
     return SLOT_HOURS.filter((hour) => santiagoToUtc(y, m, d, hour).getTime() >= minStart).map(
       (hour) => ({
@@ -107,7 +109,7 @@ export default function BookingForm() {
   const dateHint = useMemo(() => {
     if (!values.date) return undefined;
     const [y, m, d] = values.date.split('-').map(Number);
-    if (weekdayOfCalendarDate(y, m, d) === 0) return 'No atendemos los domingos.';
+    if (!isWorkingDay(weekdayOfCalendarDate(y, m, d))) return 'Solo atendemos de lunes a viernes.';
     if (timeOptions.length === 0)
       return 'Ya no quedan bloques con 4 h de anticipación para ese día; elige otra fecha.';
     return undefined;
