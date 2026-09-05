@@ -21,32 +21,21 @@ const statusLines = [
 ---
 
 <section class="relative overflow-hidden bg-navy pt-16 text-white">
-  {/* Resplandor decorativo */}
+  {/* Imagen de fondo */}
+  <img
+    src="/hero.jpg"
+    alt=""
+    aria-hidden="true"
+    class="absolute inset-0 z-0 h-full w-full object-cover"
+    fetchpriority="high"
+  />
+
+  {/* Overlay para legibilidad del texto */}
   <div
-    class="absolute inset-0 z-0 bg-[radial-gradient(1100px_700px_at_78%_-10%,rgba(28,156,148,0.35),transparent_60%)]"
+    class="absolute inset-0 z-[1] bg-gradient-to-r from-navy/95 via-navy/80 to-navy/30 max-[900px]:bg-gradient-to-b max-[900px]:from-navy/90 max-[900px]:via-navy/75 max-[900px]:to-navy/40"
     aria-hidden="true"
   >
   </div>
-
-  {/* Ondas decorativas del fondo (ancladas abajo en móvil) */}
-  <svg
-    class="absolute inset-0 z-[1] h-full w-full opacity-90 max-sm:top-auto max-sm:bottom-0 max-sm:h-[45%]"
-    viewBox="0 0 1180 620"
-    preserveAspectRatio="none"
-    aria-hidden="true"
-  >
-    <path
-      d="M0,420 C220,340 340,520 620,440 C860,370 980,240 1180,300 L1180,620 L0,620 Z"
-      fill="#0f2b34"></path>
-    <path
-      d="M0,480 C260,400 420,560 700,480 C920,420 1020,320 1180,380 L1180,620 L0,620 Z"
-      fill="#123a3a"
-      opacity="0.85"></path>
-    <path
-      d="M0,540 C300,470 500,600 780,540 C960,500 1060,430 1180,470 L1180,620 L0,620 Z"
-      fill="#1c9c94"
-      opacity="0.28"></path>
-  </svg>
 
   <Container
     class="relative z-[3] grid grid-cols-[1.05fr_0.85fr] items-center gap-10 pt-16 pb-24 max-[900px]:grid-cols-1 max-[900px]:gap-8 max-[900px]:pt-10 max-[900px]:pb-14 max-sm:px-10"
