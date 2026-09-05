@@ -2,7 +2,7 @@ import type { IconName } from './icons';
 
 export interface Service {
   code: string;
-  icon: IconName;
+  image: string;
   title: string;
   description: string;
   brands: string;
@@ -11,7 +11,7 @@ export interface Service {
 export const services: Service[] = [
   {
     code: '01 / LAV',
-    icon: 'washer',
+    image: '/lavadora.png',
     title: 'Lavadoras',
     description:
       'Fugas, ruidos, no centrifuga, no enciende, tarjetas electrónicas y sistemas de carga frontal y superior.',
@@ -19,7 +19,7 @@ export const services: Service[] = [
   },
   {
     code: '02 / SEC',
-    icon: 'dryer',
+    image: '/secadora.png',
     title: 'Secadoras',
     description:
       'No calienta, ciclos incompletos, correas y resistencias, mantenimiento de ductos y sensores de humedad.',
@@ -27,7 +27,7 @@ export const services: Service[] = [
   },
   {
     code: '03 / A/C',
-    icon: 'ac',
+    image: '/aire-acondicionado.png',
     title: 'Aire acondicionado',
     description:
       'Instalación, recarga de gas, limpieza de filtros y evaporadora, mantenimiento preventivo tipo split e inverter.',
@@ -35,7 +35,7 @@ export const services: Service[] = [
   },
   {
     code: '04 / REF',
-    icon: 'fridge',
+    image: '/nevera.png',
     title: 'Refrigeración',
     description:
       'Neveras que no enfrían, fugas de gas, termostatos, compresores y sellado de empaques.',
@@ -43,7 +43,7 @@ export const services: Service[] = [
   },
   {
     code: '05 / CFR',
-    icon: 'cold-room',
+    image: '/camara-frio.png',
     title: 'Cámaras de frío',
     description:
       'Fabricación, mantenimiento y reparación para restaurantes, tiendas y negocios — cuartos fríos, exhibidores y neveras industriales.',
@@ -51,7 +51,7 @@ export const services: Service[] = [
   },
   {
     code: '06 / MTO',
-    icon: 'gear',
+    image: '/mantenimiento.png',
     title: 'Mantenimiento preventivo',
     description:
       'Planes periódicos para hogares y negocios: menos daños imprevistos, más vida útil de sus equipos.',
