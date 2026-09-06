@@ -7,16 +7,16 @@ services:
       - 4321
     environment:
       NODE_ENV: production
-      DATABASE_URL: postgresql://${POSTGRES_USER:-servicio_americano}:${POSTGRES_PASSWORD:-servicio_americano}@db:5432/${POSTGRES_DB:-servicio_americano}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-servicio_americano}:${POSTGRES_PASSWORD:-servicio_americano}@db-spa:5432/${POSTGRES_DB:-servicio_americano}
       GOOGLE_CALENDAR_ID: ${GOOGLE_CALENDAR_ID:-}
       GOOGLE_CLIENT_EMAIL: ${GOOGLE_CLIENT_EMAIL:-}
       GOOGLE_PRIVATE_KEY: ${GOOGLE_PRIVATE_KEY:-}
     depends_on:
-      db:
+      db-spa:
         condition: service_healthy
     restart: unless-stopped
 
-  db:
+  db-spa:
     image: postgres:18-alpine
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-servicio_americano}
@@ -31,6 +31,11 @@ services:
       timeout: 5s
       retries: 10
     restart: unless-stopped
-
+    networks:
+      - n8n_network
 volumes:
   postgres_data:
+
+networks:
+  n8n_network:
+    external: true
