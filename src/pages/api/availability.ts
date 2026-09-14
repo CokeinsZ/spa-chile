@@ -11,7 +11,7 @@ import {
   listCandidateSlots,
   parseDateParam,
 } from '../../lib/schedule';
-import { getTakenSlots } from '../../server/appointments';
+import { getSlotCounts, hasSlotCapacity } from '../../server/appointments';
 
 export const prerender = false;
 
@@ -36,16 +36,16 @@ export const GET: APIRoute = async ({ url }) => {
 
   const { start, end } = bookingWindow(from);
 
-  let taken: Set<number>;
+  let counts: Map<number, number>;
   try {
-    taken = await getTakenSlots(start, end);
+    counts = await getSlotCounts(start, end);
   } catch (error) {
     console.error('Error consultando disponibilidad:', error);
     return json({ ok: false, error: 'No se pudo consultar la disponibilidad.' }, 500);
   }
 
   const available = listCandidateSlots(start, end)
-    .filter((slot) => !taken.has(slot.getTime()))
+    .filter((slot) => hasSlotCapacity(counts, slot))
     .map((slot) => slot.toISOString());
 
   return json({

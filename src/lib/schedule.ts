@@ -13,6 +13,8 @@ export const SLOT_HOURS = [8, 10, 12, 14, 16] as const;
 export const SLOT_DURATION_HOURS = 2;
 export const MIN_NOTICE_HOURS = 4;
 export const MAX_BOOKING_DAYS = 30;
+/** Máximo de citas que se aceptan en un mismo bloque horario. */
+export const MAX_APPOINTMENTS_PER_SLOT = 4;
 
 const HOUR_MS = 3_600_000;
 const DAY_MS = 24 * HOUR_MS;

@@ -15,6 +15,8 @@ services:
       db-spa:
         condition: service_healthy
     restart: unless-stopped
+    networks:
+      - default
 
   db-spa:
     image: postgres:18-alpine
@@ -32,6 +34,9 @@ services:
       retries: 10
     restart: unless-stopped
     networks:
+      # default: para que `app` pueda resolver el host "db-spa"
+      - default
+      # n8n_network: acceso desde las automatizaciones de n8n
       - n8n_network
 volumes:
   postgres_data:

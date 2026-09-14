@@ -1,30 +1,63 @@
 /**
  * Lógica de persistencia de citas.
- * La BD es la fuente de verdad de la disponibilidad: la restricción
- * UNIQUE(services.scheduled_date) impide el doble agendamiento incluso ante
- * dos solicitudes simultáneas (la segunda falla con 23505 → HTTP 409).
+ * La BD es la fuente de verdad de la disponibilidad. Se aceptan hasta
+ * MAX_APPOINTMENTS_PER_SLOT citas por bloque horario; el cupo se protege
+ * ante solicitudes simultáneas con un bloqueo de advisory por bloque
+ * (pg_advisory_xact_lock), de modo que el conteo + inserción es atómico.
  */
 import { getPool } from './db';
+import { MAX_APPOINTMENTS_PER_SLOT } from '../lib/schedule';
 import type { BookingPayload } from '../lib/validation';
 
-/** Instantes ya agendados dentro de [start, end]. */
-export async function getTakenSlots(start: Date, end: Date): Promise<Set<number>> {
-  const { rows } = await getPool().query<{ scheduled_date: Date }>(
-    'SELECT scheduled_date FROM services WHERE scheduled_date >= $1 AND scheduled_date <= $2',
+/** El bloque ya tiene el máximo de citas permitidas. */
+export class SlotFullError extends Error {
+  constructor() {
+    super('El bloque horario ya está completo');
+    this.name = 'SlotFullError';
+  }
+}
+
+/** Citas por bloque dentro de [start, end] (instante en epoch ms → cantidad). */
+export async function getSlotCounts(start: Date, end: Date): Promise<Map<number, number>> {
+  const { rows } = await getPool().query<{ scheduled_date: Date; count: number }>(
+    `SELECT scheduled_date, COUNT(*)::int AS count
+     FROM services
+     WHERE scheduled_date >= $1 AND scheduled_date <= $2
+     GROUP BY scheduled_date`,
     [start.toISOString(), end.toISOString()],
   );
-  return new Set(rows.map((row) => new Date(row.scheduled_date).getTime()));
+  return new Map(rows.map((row) => [new Date(row.scheduled_date).getTime(), row.count]));
+}
+
+/** ¿Quedan cupos en el bloque indicado? */
+export function hasSlotCapacity(counts: Map<number, number>, slot: Date): boolean {
+  return (counts.get(slot.getTime()) ?? 0) < MAX_APPOINTMENTS_PER_SLOT;
 }
 
 /**
- * Crea la cita en una transacción: upsert del cliente por teléfono +
- * inserción del servicio. Devuelve el id del servicio creado.
- * Lanza pg error 23505 si el horario ya está tomado.
+ * Crea la cita en una transacción:
+ *   1. Bloqueo de advisory por bloque horario (serializa solicitudes concurrentes)
+ *   2. Verificación de cupo (máx. MAX_APPOINTMENTS_PER_SLOT)
+ *   3. Upsert del cliente por teléfono + inserción del servicio
+ * Devuelve el id del servicio creado. Lanza SlotFullError si no quedan cupos.
  */
 export async function createAppointment(payload: BookingPayload): Promise<number> {
   const client = await getPool().connect();
   try {
     await client.query('BEGIN');
+
+    // Serializa las inserciones concurrentes del MISMO bloque horario.
+    await client.query('SELECT pg_advisory_xact_lock(hashtextextended($1, 0))', [
+      payload.scheduledAt,
+    ]);
+
+    const countResult = await client.query<{ count: number }>(
+      'SELECT COUNT(*)::int AS count FROM services WHERE scheduled_date = $1',
+      [payload.scheduledAt],
+    );
+    if (countResult.rows[0].count >= MAX_APPOINTMENTS_PER_SLOT) {
+      throw new SlotFullError();
+    }
 
     const userResult = await client.query<{ id: number }>(
       `INSERT INTO users (full_name, email, phone_number)

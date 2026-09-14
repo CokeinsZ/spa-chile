@@ -6,7 +6,12 @@
  */
 import type { APIRoute } from 'astro';
 import { validateBooking, type BookingErrors } from '../../lib/validation';
-import { attachCalendarEvent, createAppointment } from '../../server/appointments';
+import { MAX_APPOINTMENTS_PER_SLOT } from '../../lib/schedule';
+import {
+  SlotFullError,
+  attachCalendarEvent,
+  createAppointment,
+} from '../../server/appointments';
 import { createCalendarEvent, isCalendarConfigured } from '../../server/calendar';
 
 export const prerender = false;
@@ -39,13 +44,16 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     appointmentId = await createAppointment(value);
   } catch (error) {
-    // 23505 = unique_violation → el horario acaba de ser tomado.
-    if ((error as { code?: string }).code === '23505') {
+    // Bloque lleno (o, si la BD aún tiene el UNIQUE antiguo, choque de horario).
+    if (
+      error instanceof SlotFullError ||
+      (error as { code?: string }).code === '23505'
+    ) {
       return json(
         {
           ok: false,
           errors: {
-            scheduledAt: 'Ese horario acaba de ser agendado. Por favor elige otro.',
+            scheduledAt: `Ese bloque ya tiene las ${MAX_APPOINTMENTS_PER_SLOT} visitas permitidas. Por favor elige otro.`,
           } satisfies BookingErrors,
         },
         409,
