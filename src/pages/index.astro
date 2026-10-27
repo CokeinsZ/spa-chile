@@ -12,9 +12,11 @@ import Testimonials from '../components/organisms/Testimonials.astro';
 import ContactSection from '../components/organisms/ContactSection.astro';
 import SiteFooter from '../components/organisms/SiteFooter.astro';
 import WhatsAppFloat from '../components/organisms/WhatsAppFloat.astro';
+import GoogleAds from '../components/atoms/GoogleAds.astro';
 ---
 
 <BaseLayout>
+  <GoogleAds slot="head" />
   <SiteHeader />
   <main>
     <Hero />

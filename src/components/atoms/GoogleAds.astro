@@ -1,0 +1,19 @@
+---
+/**
+ * Etiqueta global de Google Ads (gtag.js) para el seguimiento de conversiones.
+ * Va dentro del <head>: se inserta mediante el slot `head` de BaseLayout.
+ * `is:inline` evita que Astro procese o empaquete los scripts de Google.
+ */
+---
+
+<!-- Google tag (gtag.js) -->
+<script is:inline async src="https://www.googletagmanager.com/gtag/js?id=AW-456549161"></script>
+<script is:inline>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+  gtag('js', new Date());
+
+  gtag('config', 'AW-456549161');
+</script>

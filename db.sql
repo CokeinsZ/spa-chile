@@ -44,3 +44,6 @@ CREATE TABLE IF NOT EXISTS services (
 );
 
 CREATE INDEX IF NOT EXISTS idx_services_scheduled_date ON services (scheduled_date);
+
+CREATE INDEX IF NOT EXISTS idx_services_created_at 
+ON services (created_at);
