@@ -4,16 +4,49 @@
  * Va dentro del <head>: se inserta mediante el slot `head` de BaseLayout.
  * `is:inline` evita que Astro procese o empaquete los scripts de Google.
  */
+import { CONFIRMATION_STORAGE_KEY } from '../../lib/confirmation';
+
+interface Props {
+  /**
+   * Registra además la conversión de cita agendada (solo en /gracias).
+   * Se envía únicamente si BookingForm dejó una cita en sessionStorage, con su
+   * id como transaction_id para que Google descarte recargas y duplicados.
+   */
+  bookingConversion?: boolean;
+}
+
+const { bookingConversion = false } = Astro.props;
+
+const GOOGLE_ADS_ID = 'AW-456549161';
+const BOOKING_CONVERSION = `${GOOGLE_ADS_ID}/U05-CJCs-6odEKnG2dkB`;
 ---
 
 <!-- Google tag (gtag.js) -->
-<script is:inline async src="https://www.googletagmanager.com/gtag/js?id=AW-456549161"></script>
-<script is:inline>
+<script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`}></script>
+<script is:inline define:vars={{ adsId: GOOGLE_ADS_ID }}>
   window.dataLayer = window.dataLayer || [];
-  function gtag() {
+  // define:vars envuelve el script en una función: gtag se publica en window
+  window.gtag = function gtag() {
     dataLayer.push(arguments);
-  }
+  };
   gtag('js', new Date());
 
-  gtag('config', 'AW-456549161');
+  gtag('config', adsId);
 </script>
+{
+  bookingConversion && (
+    <script
+      is:inline
+      define:vars={{ sendTo: BOOKING_CONVERSION, storageKey: CONFIRMATION_STORAGE_KEY }}
+    >
+      try {
+        const booking = JSON.parse(sessionStorage.getItem(storageKey) || 'null');
+        if (booking && booking.id) {
+          gtag('event', 'conversion', { send_to: sendTo, transaction_id: String(booking.id) });
+        }
+      } catch {
+        // Sin sessionStorage o con datos corruptos no se registra la conversión
+      }
+    </script>
+  )
+}
