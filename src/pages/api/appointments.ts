@@ -1,17 +1,12 @@
 /**
  * POST /api/appointments
- * Recibe la solicitud de agendamiento, la valida de nuevo en el servidor,
- * verifica disponibilidad en la BD (con garantía anti-carrera vía
- * UNIQUE(scheduled_date)) y registra la cita en la BD y en Google Calendar.
+ * Recibe la solicitud de agendamiento, la valida de nuevo en el servidor
+ * y registra la cita en la BD y en Google Calendar. No hay límite de citas
+ * por horario, así que no se verifica disponibilidad.
  */
 import type { APIRoute } from 'astro';
-import { validateBooking, type BookingErrors } from '../../lib/validation';
-import { MAX_APPOINTMENTS_PER_SLOT } from '../../lib/schedule';
-import {
-  SlotFullError,
-  attachCalendarEvent,
-  createAppointment,
-} from '../../server/appointments';
+import { validateBooking } from '../../lib/validation';
+import { attachCalendarEvent, createAppointment } from '../../server/appointments';
 import { createCalendarEvent, isCalendarConfigured } from '../../server/calendar';
 
 export const prerender = false;
@@ -44,21 +39,6 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     appointmentId = await createAppointment(value);
   } catch (error) {
-    // Bloque lleno (o, si la BD aún tiene el UNIQUE antiguo, choque de horario).
-    if (
-      error instanceof SlotFullError ||
-      (error as { code?: string }).code === '23505'
-    ) {
-      return json(
-        {
-          ok: false,
-          errors: {
-            scheduledAt: `Ese bloque ya tiene las ${MAX_APPOINTMENTS_PER_SLOT} visitas permitidas. Por favor elige otro.`,
-          } satisfies BookingErrors,
-        },
-        409,
-      );
-    }
     console.error('Error creando la cita:', error);
     return json({ ok: false, error: 'No se pudo registrar la cita. Inténtalo más tarde.' }, 500);
   }

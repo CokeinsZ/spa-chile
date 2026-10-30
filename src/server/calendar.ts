@@ -8,7 +8,7 @@
  * de la cuenta de servicio GOOGLE_CLIENT_EMAIL.
  */
 import { google, type calendar_v3 } from 'googleapis';
-import { BOOKING_TZ, SLOT_DURATION_HOURS } from '../lib/schedule';
+import { BOOKING_TZ, slotEnd } from '../lib/schedule';
 import { env } from './env';
 
 export interface CalendarEventDetails {
@@ -43,7 +43,8 @@ function getClient(): calendar_v3.Calendar {
 
 /** Crea el evento y devuelve su id. Lanza si la API falla. */
 export async function createCalendarEvent(details: CalendarEventDetails): Promise<string> {
-  const end = new Date(details.start.getTime() + SLOT_DURATION_HOURS * 3_600_000);
+  // El evento abarca toda la jornada elegida (mañana 8–12 o tarde 12–18).
+  const end = slotEnd(details.start);
   const response = await getClient().events.insert({
     calendarId: env('GOOGLE_CALENDAR_ID'),
     requestBody: {

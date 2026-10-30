@@ -3,8 +3,7 @@ import { DEVICE_OPTIONS, validateBooking, type BookingErrors } from '../../lib/v
 import {
   MAX_BOOKING_DAYS,
   MIN_NOTICE_HOURS,
-  SLOT_DURATION_HOURS,
-  SLOT_HOURS,
+  TIME_SLOTS,
   getZonedParts,
   isWorkingDay,
   santiagoToUtc,
@@ -94,7 +93,7 @@ export default function BookingForm() {
     setErrors((current) => ({ ...current, [field]: undefined }));
   };
 
-  // Los límites de fecha y los bloques se calculan en hora de Santiago
+  // Los límites de fecha y los horarios se calculan en hora de Santiago
   const [minDate, maxDate] = useMemo(() => {
     const today = getZonedParts(new Date());
     const limit = new Date(
@@ -106,18 +105,18 @@ export default function BookingForm() {
     ];
   }, []);
 
-  /** Bloques ofrecibles para la fecha elegida (solo lun–vie, hoy ≥ +4 h). */
+  /** Horarios ofrecibles para la fecha elegida (solo lun–vie, hoy ≥ +4 h). */
   const timeOptions: SelectOption[] = useMemo(() => {
     if (!values.date) return [];
     const [y, m, d] = values.date.split('-').map(Number);
     if (!isWorkingDay(weekdayOfCalendarDate(y, m, d))) return [];
     const minStart = Date.now() + MIN_NOTICE_HOURS * HOUR_MS;
-    return SLOT_HOURS.filter((hour) => santiagoToUtc(y, m, d, hour).getTime() >= minStart).map(
-      (hour) => ({
-        value: String(hour),
-        label: `${String(hour).padStart(2, '0')}:00 – ${String(hour + SLOT_DURATION_HOURS).padStart(2, '0')}:00`,
-      }),
-    );
+    return TIME_SLOTS.filter(
+      (slot) => santiagoToUtc(y, m, d, slot.startHour).getTime() >= minStart,
+    ).map((slot) => ({
+      value: String(slot.startHour),
+      label: `${slot.label} (${String(slot.startHour).padStart(2, '0')}:00 – ${slot.endHour}:00)`,
+    }));
   }, [values.date]);
 
   const dateHint = useMemo(() => {
@@ -125,7 +124,7 @@ export default function BookingForm() {
     const [y, m, d] = values.date.split('-').map(Number);
     if (!isWorkingDay(weekdayOfCalendarDate(y, m, d))) return 'Solo atendemos de lunes a viernes.';
     if (timeOptions.length === 0)
-      return 'Ya no quedan bloques con 4 h de anticipación para ese día; elige otra fecha.';
+      return 'Ya no quedan horarios con 12h de anticipación para ese día; elige otra fecha.';
     return undefined;
   }, [values.date, timeOptions]);
 
@@ -134,7 +133,7 @@ export default function BookingForm() {
     setServerError('');
 
     const [y, m, d] = values.date.split('-').map(Number);
-    // El bloque elegido es hora de Santiago; no se usa la zona del navegador.
+    // El horario elegido es hora de Santiago; no se usa la zona del navegador.
     const scheduledAt =
       values.date && values.time ? santiagoToUtc(y, m, d, Number(values.time)).toISOString() : '';
 
@@ -302,11 +301,11 @@ export default function BookingForm() {
       />
       <SelectField
         id="f-hora"
-        label="Bloque horario"
+        label="Horario de la visita"
         value={values.time}
         onChange={setField('time')}
         options={timeOptions}
-        placeholder={values.date ? 'Selecciona el bloque' : 'Primero elige la fecha'}
+        placeholder={values.date ? 'Mañana o tarde' : 'Primero elige la fecha'}
         error={errors.time}
         required
       />

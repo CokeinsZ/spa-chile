@@ -1,17 +1,18 @@
 /**
  * GET /api/availability?from=YYYY-MM-DD
- * Devuelve los bloques disponibles en la ventana [from + 4h, from + 30 días]
- * (por defecto from = ahora). La disponibilidad se calcula contra la BD,
- * que es la fuente de verdad.
+ * Devuelve los horarios agendables (mañana/tarde, lun–vie) en la ventana
+ * [from + 4h, from + 30 días] (por defecto from = ahora). Como no hay límite
+ * de citas por horario, la disponibilidad depende solo de las reglas de agenda.
  */
 import type { APIRoute } from 'astro';
 import {
-  SLOT_DURATION_HOURS,
   bookingWindow,
+  findSlotByStartHour,
+  getZonedParts,
   listCandidateSlots,
   parseDateParam,
+  slotEnd,
 } from '../../lib/schedule';
-import { getSlotCounts, hasSlotCapacity } from '../../server/appointments';
 
 export const prerender = false;
 
@@ -19,7 +20,7 @@ function json(body: unknown, status = 200): Response {
   return Response.json(body, { status });
 }
 
-export const GET: APIRoute = async ({ url }) => {
+export const GET: APIRoute = ({ url }) => {
   const rawFrom = url.searchParams.get('from');
 
   let from: Date | undefined;
@@ -36,23 +37,16 @@ export const GET: APIRoute = async ({ url }) => {
 
   const { start, end } = bookingWindow(from);
 
-  let counts: Map<number, number>;
-  try {
-    counts = await getSlotCounts(start, end);
-  } catch (error) {
-    console.error('Error consultando disponibilidad:', error);
-    return json({ ok: false, error: 'No se pudo consultar la disponibilidad.' }, 500);
-  }
-
-  const available = listCandidateSlots(start, end)
-    .filter((slot) => hasSlotCapacity(counts, slot))
-    .map((slot) => slot.toISOString());
+  const available = listCandidateSlots(start, end).map((slot) => ({
+    start: slot.toISOString(),
+    end: slotEnd(slot).toISOString(),
+    label: findSlotByStartHour(getZonedParts(slot).hour)!.label,
+  }));
 
   return json({
     ok: true,
     from: start.toISOString(),
     to: end.toISOString(),
-    slotDurationHours: SLOT_DURATION_HOURS,
     available,
   });
 };
