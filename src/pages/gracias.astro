@@ -11,11 +11,7 @@ import { site, whatsappDefaultLink } from '../data/site';
 <BaseLayout title={`¡Cita agendada! — ${site.name}`}>
   <Fragment slot="head">
     <meta name="robots" content="noindex, nofollow" />
-    <GoogleAds />
-    <!-- Evento de conversión de Google Ads: solo en esta página -->
-    <script is:inline>
-      gtag('event', 'conversion', { send_to: 'AW-456549161/U05-CJCs-6odEKnG2dkB' });
-    </script>
+    <GoogleAds bookingConversion />
   </Fragment>
 
   <main class="flex min-h-screen items-center bg-navy py-[84px] text-white max-sm:py-14">
@@ -39,14 +35,17 @@ import { site, whatsappDefaultLink } from '../data/site';
 </BaseLayout>
 
 <script>
-  import { CONFIRMATION_STORAGE_KEY } from '../lib/confirmation';
+  import { CONFIRMATION_STORAGE_KEY, type BookingConfirmation } from '../lib/confirmation';
 
-  // Detalle de la cita que dejó el formulario antes de redirigir
+  // Detalle de la cita que dejó el formulario antes de redirigir. Se borra al
+  // leerlo para no dejar el teléfono guardado; GoogleAds ya lo leyó en el <head>
+  // (los scripts de módulo corren después) y al recargar no se repite la conversión.
   try {
     const stored = sessionStorage.getItem(CONFIRMATION_STORAGE_KEY);
+    sessionStorage.removeItem(CONFIRMATION_STORAGE_KEY);
     const detail = document.getElementById('booking-detail');
     if (stored && detail) {
-      const { at, phone } = JSON.parse(stored) as { at: string; phone: string };
+      const { at, phone } = JSON.parse(stored) as BookingConfirmation;
       const when = new Intl.DateTimeFormat('es-CL', {
         dateStyle: 'full',
         timeStyle: 'short',

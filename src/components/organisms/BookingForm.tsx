@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { DEVICE_OPTIONS, validateBooking, type BookingErrors } from '../../lib/validation';
 import {
   MAX_BOOKING_DAYS,
@@ -10,7 +10,7 @@ import {
   santiagoToUtc,
   weekdayOfCalendarDate,
 } from '../../lib/schedule';
-import { CONFIRMATION_STORAGE_KEY } from '../../lib/confirmation';
+import { CONFIRMATION_STORAGE_KEY, type BookingConfirmation } from '../../lib/confirmation';
 import { buttonClass } from '../atoms/buttonStyles';
 import { FormField } from '../molecules/FormField';
 import { SelectField, type SelectOption } from '../molecules/SelectField';
@@ -74,6 +74,20 @@ export default function BookingForm() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState('');
+
+  // Al volver con "Atrás" desde /gracias el navegador puede restaurar la página
+  // desde bfcache con el envío aún en curso: se reinicia el formulario.
+  useEffect(() => {
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (!event.persisted) return;
+      setValues(initialValues);
+      setErrors({});
+      setServerError('');
+      setSubmitting(false);
+    };
+    window.addEventListener('pageshow', onPageShow);
+    return () => window.removeEventListener('pageshow', onPageShow);
+  }, []);
 
   const setField = (field: FieldKey) => (value: string) => {
     setValues((current) => ({ ...current, [field]: value }));
@@ -153,12 +167,14 @@ export default function BookingForm() {
       if (response.status === 201 && data.ok) {
         // La página /gracias muestra el detalle y registra la conversión de Google Ads
         try {
-          sessionStorage.setItem(
-            CONFIRMATION_STORAGE_KEY,
-            JSON.stringify({ at: value.scheduledAt, phone: value.phone }),
-          );
+          const confirmation: BookingConfirmation = {
+            id: data.appointmentId,
+            at: value.scheduledAt,
+            phone: value.phone,
+          };
+          sessionStorage.setItem(CONFIRMATION_STORAGE_KEY, JSON.stringify(confirmation));
         } catch {
-          // Sin sessionStorage /gracias muestra un mensaje genérico
+          // Sin sessionStorage /gracias muestra un mensaje genérico y no registra la conversión
         }
         redirecting = true;
         window.location.assign('/gracias');
