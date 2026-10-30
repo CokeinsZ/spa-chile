@@ -10,6 +10,7 @@ import {
   santiagoToUtc,
   weekdayOfCalendarDate,
 } from '../../lib/schedule';
+import { CONFIRMATION_STORAGE_KEY } from '../../lib/confirmation';
 import { buttonClass } from '../atoms/buttonStyles';
 import { FormField } from '../molecules/FormField';
 import { SelectField, type SelectOption } from '../molecules/SelectField';
@@ -73,7 +74,6 @@ export default function BookingForm() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState('');
-  const [confirmed, setConfirmed] = useState<{ at: string; phone: string } | null>(null);
 
   const setField = (field: FieldKey) => (value: string) => {
     setValues((current) => ({ ...current, [field]: value }));
@@ -141,6 +141,7 @@ export default function BookingForm() {
     if (!value) return;
 
     setSubmitting(true);
+    let redirecting = false;
     try {
       const response = await fetch('/api/appointments', {
         method: 'POST',
@@ -150,7 +151,17 @@ export default function BookingForm() {
       const data = await response.json().catch(() => ({}));
 
       if (response.status === 201 && data.ok) {
-        setConfirmed({ at: value.scheduledAt, phone: value.phone });
+        // La página /gracias muestra el detalle y registra la conversión de Google Ads
+        try {
+          sessionStorage.setItem(
+            CONFIRMATION_STORAGE_KEY,
+            JSON.stringify({ at: value.scheduledAt, phone: value.phone }),
+          );
+        } catch {
+          // Sin sessionStorage /gracias muestra un mensaje genérico
+        }
+        redirecting = true;
+        window.location.assign('/gracias');
         return;
       }
       if (data.errors) {
@@ -163,37 +174,9 @@ export default function BookingForm() {
         'No pudimos contactar el servidor. Revisa tu conexión o escríbenos por WhatsApp.',
       );
     } finally {
-      setSubmitting(false);
+      // Mientras se navega a /gracias el botón sigue deshabilitado
+      if (!redirecting) setSubmitting(false);
     }
-  }
-
-  /* ---------- Confirmación ---------- */
-  if (confirmed) {
-    const when = new Intl.DateTimeFormat('es-CL', {
-      dateStyle: 'full',
-      timeStyle: 'short',
-      timeZone: 'America/Santiago',
-    }).format(new Date(confirmed.at));
-    return (
-      <div className="flex flex-col items-start gap-4 rounded-[10px] bg-paper-2 px-[26px] py-7 text-ink shadow-[0_30px_60px_-20px_rgba(0,0,0,0.5)] max-sm:px-[18px] max-sm:py-[22px]">
-        <p className="font-display text-lg font-semibold text-navy">¡Cita agendada!</p>
-        <p className="text-[14.5px] leading-[1.65] text-ink-soft">
-          Registramos tu visita para el <strong className="text-ink">{when}</strong> — te
-          confirmaremos al <strong className="text-ink">+56 9 {confirmed.phone}</strong>. Si
-          necesitas modificar la hora, escríbenos por WhatsApp.
-        </p>
-        <button
-          type="button"
-          onClick={() => {
-            setValues(initialValues);
-            setConfirmed(null);
-          }}
-          className={buttonClass('dark')}
-        >
-          Agendar otra cita
-        </button>
-      </div>
-    );
   }
 
   /* ---------- Formulario ---------- */
