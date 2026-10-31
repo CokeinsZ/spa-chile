@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { TURNSTILE_SITE_KEY } from 'astro:env/client';
 import { DEVICE_OPTIONS, validateBooking, type BookingErrors } from '../../lib/validation';
 import {
   MAX_BOOKING_DAYS,
@@ -14,6 +15,7 @@ import { buttonClass } from '../atoms/buttonStyles';
 import { FormField } from '../molecules/FormField';
 import { SelectField, type SelectOption } from '../molecules/SelectField';
 import { TextareaField } from '../molecules/TextareaField';
+import { TurnstileWidget } from '../molecules/TurnstileWidget';
 
 interface FormValues {
   fullName: string;
@@ -73,6 +75,16 @@ export default function BookingForm() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState('');
+  // Token anti-bots de Turnstile (un solo uso). Cambiar `turnstileKey` vuelve a
+  // montar el widget, que entrega un token nuevo.
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const [turnstileKey, setTurnstileKey] = useState(0);
+  const [turnstileError, setTurnstileError] = useState('');
+
+  const resetTurnstile = () => {
+    setTurnstileToken('');
+    setTurnstileKey((key) => key + 1);
+  };
 
   // Al volver con "Atrás" desde /gracias el navegador puede restaurar la página
   // desde bfcache con el envío aún en curso: se reinicia el formulario.
@@ -83,6 +95,9 @@ export default function BookingForm() {
       setErrors({});
       setServerError('');
       setSubmitting(false);
+      // El token pudo haberse gastado en el envío anterior.
+      setTurnstileError('');
+      resetTurnstile();
     };
     window.addEventListener('pageshow', onPageShow);
     return () => window.removeEventListener('pageshow', onPageShow);
@@ -93,19 +108,25 @@ export default function BookingForm() {
     setErrors((current) => ({ ...current, [field]: undefined }));
   };
 
-  // Los límites de fecha y los horarios se calculan en hora de Santiago
+  // Los límites de fecha y los horarios se calculan en hora de Santiago.
+  // La primera fecha posible es la primera con algún horario que cumpla la anticipación mínima.
   const [minDate, maxDate] = useMemo(() => {
     const today = getZonedParts(new Date());
+    const earliest = new Date(Date.now() + MIN_NOTICE_HOURS * HOUR_MS);
+    const e = getZonedParts(earliest);
+    const lastStartHour = Math.max(...TIME_SLOTS.map((slot) => slot.startHour));
+    const skipDay = santiagoToUtc(e.year, e.month, e.day, lastStartHour) < earliest ? 1 : 0;
+    const first = new Date(Date.UTC(e.year, e.month - 1, e.day + skipDay, 12));
     const limit = new Date(
       Date.UTC(today.year, today.month - 1, today.day + MAX_BOOKING_DAYS, 12),
     );
     return [
-      toDateInputValue(today.year, today.month, today.day),
+      toDateInputValue(first.getUTCFullYear(), first.getUTCMonth() + 1, first.getUTCDate()),
       toDateInputValue(limit.getUTCFullYear(), limit.getUTCMonth() + 1, limit.getUTCDate()),
     ];
   }, []);
 
-  /** Horarios ofrecibles para la fecha elegida (solo lun–vie, hoy ≥ +4 h). */
+  /** Horarios ofrecibles para la fecha elegida (solo lun–vie, ≥ ahora + MIN_NOTICE_HOURS). */
   const timeOptions: SelectOption[] = useMemo(() => {
     if (!values.date) return [];
     const [y, m, d] = values.date.split('-').map(Number);
@@ -124,7 +145,7 @@ export default function BookingForm() {
     const [y, m, d] = values.date.split('-').map(Number);
     if (!isWorkingDay(weekdayOfCalendarDate(y, m, d))) return 'Solo atendemos de lunes a viernes.';
     if (timeOptions.length === 0)
-      return 'Ya no quedan horarios con 12h de anticipación para ese día; elige otra fecha.';
+      return `Ya no quedan horarios con ${MIN_NOTICE_HOURS}h de anticipación para ese día; elige otra fecha.`;
     return undefined;
   }, [values.date, timeOptions]);
 
@@ -153,13 +174,18 @@ export default function BookingForm() {
     setErrors(formErrors);
     if (!value) return;
 
+    if (!turnstileToken) {
+      setTurnstileError('Espera a que termine la verificación de seguridad e inténtalo de nuevo.');
+      return;
+    }
+
     setSubmitting(true);
     let redirecting = false;
     try {
       const response = await fetch('/api/appointments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(value),
+        body: JSON.stringify({ ...value, turnstileToken }),
       });
       const data = await response.json().catch(() => ({}));
 
@@ -190,7 +216,11 @@ export default function BookingForm() {
       );
     } finally {
       // Mientras se navega a /gracias el botón sigue deshabilitado
-      if (!redirecting) setSubmitting(false);
+      if (!redirecting) {
+        setSubmitting(false);
+        // El servidor pudo haber gastado el token: se pide uno nuevo para reintentar.
+        resetTurnstile();
+      }
     }
   }
 
@@ -309,6 +339,15 @@ export default function BookingForm() {
         error={errors.time}
         required
       />
+
+      <div className="sm:col-span-2">
+        <TurnstileWidget
+          key={turnstileKey}
+          siteKey={TURNSTILE_SITE_KEY}
+          onTokenChange={setTurnstileToken}
+          error={turnstileToken ? undefined : turnstileError}
+        />
+      </div>
 
       {serverError && (
         <p role="alert" className="text-[13px] font-medium text-brick sm:col-span-2">

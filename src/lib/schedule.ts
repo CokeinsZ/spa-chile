@@ -105,15 +105,12 @@ export function santiagoToUtc(year: number, month: number, day: number, hour: nu
   return new Date(guess);
 }
 
-/**
- * Ventana de agendamiento: [base + 12h, base + 30 días],
- * donde base = max(from, ahora). Sin `from`, equivale a "desde ahora".
- */
-export function bookingWindow(from?: Date): { start: Date; end: Date } {
-  const base = Math.max(from?.getTime() ?? 0, Date.now());
+/** Ventana de agendamiento: [ahora + MIN_NOTICE_HOURS, ahora + MAX_BOOKING_DAYS]. */
+function bookingWindow(): { start: Date; end: Date } {
+  const now = Date.now();
   return {
-    start: new Date(base + MIN_NOTICE_HOURS * HOUR_MS),
-    end: new Date(base + MAX_BOOKING_DAYS * DAY_MS),
+    start: new Date(now + MIN_NOTICE_HOURS * HOUR_MS),
+    end: new Date(now + MAX_BOOKING_DAYS * DAY_MS),
   };
 }
 
@@ -128,29 +125,6 @@ export function slotEnd(start: Date): Date {
   const slot = findSlotByStartHour(parts.hour);
   if (!slot || parts.minute !== 0) throw new Error(`${start.toISOString()} no es inicio de un horario`);
   return santiagoToUtc(parts.year, parts.month, parts.day, slot.endHour);
-}
-
-/** Todos los inicios de horario candidatos dentro de la ventana (lun–vie, mañana/tarde). */
-export function listCandidateSlots(start: Date, end: Date): Date[] {
-  const slots: Date[] = [];
-  const first = getZonedParts(start);
-  const last = getZonedParts(end);
-  const totalDays = Math.round(
-    (Date.UTC(last.year, last.month - 1, last.day) - Date.UTC(first.year, first.month - 1, first.day)) / DAY_MS,
-  );
-
-  for (let i = 0; i <= totalDays; i++) {
-    const dayDate = new Date(Date.UTC(first.year, first.month - 1, first.day + i));
-    if (!isWorkingDay(dayDate.getUTCDay())) continue;
-    const y = dayDate.getUTCFullYear();
-    const m = dayDate.getUTCMonth() + 1;
-    const d = dayDate.getUTCDate();
-    for (const slot of TIME_SLOTS) {
-      const instant = santiagoToUtc(y, m, d, slot.startHour);
-      if (instant >= start && instant <= end) slots.push(instant);
-    }
-  }
-  return slots.sort((a, b) => a.getTime() - b.getTime());
 }
 
 /** ¿Es un instante agendable? (inicio de horario, día hábil lun–vie, dentro de la ventana). */
@@ -169,16 +143,4 @@ export function isBookableSlot(instant: Date): boolean {
 /** Día de la semana (0 = domingo) de una fecha de calendario, sin ambigüedad de zona horaria. */
 export function weekdayOfCalendarDate(year: number, month: number, day: number): number {
   return new Date(Date.UTC(year, month - 1, day)).getUTCDay();
-}
-
-/** Parsea un parámetro `from=YYYY-MM-DD` como medianoche en Santiago. */
-export function parseDateParam(raw: string): Date | null {
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(raw);
-  if (!match) return null;
-  const [year, month, day] = match.slice(1).map(Number);
-  if (month < 1 || month > 12 || day < 1 || day > 31) return null;
-  const date = santiagoToUtc(year, month, day, 0);
-  const parts = getZonedParts(date);
-  if (parts.year !== year || parts.month !== month || parts.day !== day) return null;
-  return date;
 }

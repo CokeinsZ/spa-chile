@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        TURNSTILE_SITE_KEY: ${TURNSTILE_SITE_KEY:-}
     ports:
       - 4321
     environment:
@@ -11,6 +13,7 @@ services:
       GOOGLE_CALENDAR_ID: ${GOOGLE_CALENDAR_ID:-}
       GOOGLE_CLIENT_EMAIL: ${GOOGLE_CLIENT_EMAIL:-}
       GOOGLE_PRIVATE_KEY: ${GOOGLE_PRIVATE_KEY:-}
+      TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY:-}
     depends_on:
       db-spa:
         condition: service_healthy

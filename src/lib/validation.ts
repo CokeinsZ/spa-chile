@@ -3,7 +3,7 @@
  * Módulo isomórfico: el formulario lo usa para validar antes de enviar y el
  * servidor lo vuelve a ejecutar sobre lo recibido (nunca confiar en el cliente).
  */
-import { isBookableSlot } from './schedule';
+import { MIN_NOTICE_HOURS, isBookableSlot } from './schedule';
 
 export const DEVICE_OPTIONS = [
   'Refrigerador',
@@ -105,7 +105,7 @@ export function validateBooking(input: unknown): { errors: BookingErrors; value:
   const instant = new Date(scheduledAt);
   if (!scheduledAt || Number.isNaN(instant.getTime()) || !isBookableSlot(instant)) {
     errors.scheduledAt =
-      'Elige un horario válido: lunes a viernes, en la mañana (8:00–12:00) o en la tarde (12:00–18:00), con al menos 12h de anticipación.';
+      `Elige un horario válido: lunes a viernes, en la mañana (8:00–12:00) o en la tarde (12:00–18:00), con al menos ${MIN_NOTICE_HOURS}h de anticipación.`;
   }
 
   if (Object.keys(errors).length > 0) return { errors, value: null };
