@@ -12,7 +12,8 @@ type EnvName =
   | 'DATABASE_CA_CERT'
   | 'GOOGLE_CALENDAR_ID'
   | 'GOOGLE_CLIENT_EMAIL'
-  | 'GOOGLE_PRIVATE_KEY';
+  | 'GOOGLE_PRIVATE_KEY'
+  | 'TURNSTILE_SECRET_KEY';
 
 export function env(name: EnvName): string | undefined {
   return process.env[name] ?? import.meta.env[name];

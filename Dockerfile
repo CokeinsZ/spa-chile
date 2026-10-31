@@ -8,6 +8,9 @@ RUN npm ci
 COPY astro.config.mjs tsconfig.json ./
 COPY public ./public
 COPY src ./src
+
+ARG TURNSTILE_SITE_KEY
+
 RUN npm run build
 
 FROM node:26-alpine AS runtime

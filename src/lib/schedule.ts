@@ -8,13 +8,25 @@
  */
 
 export const BOOKING_TZ = 'America/Santiago';
-/** Bloques de 2 h dentro de la jornada Lun–Vie 8:00–18:00. */
-export const SLOT_HOURS = [8, 10, 12, 14, 16] as const;
-export const SLOT_DURATION_HOURS = 2;
-export const MIN_NOTICE_HOURS = 4;
+
+export interface TimeSlot {
+  label: string;
+  /** Hora de inicio en reloj de Santiago. */
+  startHour: number;
+  /** Hora de término en reloj de Santiago. */
+  endHour: number;
+}
+
+/**
+ * Horarios agendables Lun–Vie. Sin límite de citas por horario: el cliente
+ * elige la jornada y el equipo organiza las visitas dentro de ella.
+ */
+export const TIME_SLOTS: readonly TimeSlot[] = [
+  { label: 'Mañana', startHour: 8, endHour: 12 },
+  { label: 'Tarde', startHour: 12, endHour: 18 },
+];
+export const MIN_NOTICE_HOURS = 12;
 export const MAX_BOOKING_DAYS = 30;
-/** Máximo de citas que se aceptan en un mismo bloque horario. */
-export const MAX_APPOINTMENTS_PER_SLOT = 4;
 
 const HOUR_MS = 3_600_000;
 const DAY_MS = 24 * HOUR_MS;
@@ -93,42 +105,29 @@ export function santiagoToUtc(year: number, month: number, day: number, hour: nu
   return new Date(guess);
 }
 
-/**
- * Ventana de agendamiento: [base + 4h, base + 30 días],
- * donde base = max(from, ahora). Sin `from`, equivale a "desde ahora".
- */
-export function bookingWindow(from?: Date): { start: Date; end: Date } {
-  const base = Math.max(from?.getTime() ?? 0, Date.now());
+/** Ventana de agendamiento: [ahora + MIN_NOTICE_HOURS, ahora + MAX_BOOKING_DAYS]. */
+function bookingWindow(): { start: Date; end: Date } {
+  const now = Date.now();
   return {
-    start: new Date(base + MIN_NOTICE_HOURS * HOUR_MS),
-    end: new Date(base + MAX_BOOKING_DAYS * DAY_MS),
+    start: new Date(now + MIN_NOTICE_HOURS * HOUR_MS),
+    end: new Date(now + MAX_BOOKING_DAYS * DAY_MS),
   };
 }
 
-/** Todos los inicios de bloque candidatos dentro de la ventana (lun–vie, horas fijas). */
-export function listCandidateSlots(start: Date, end: Date): Date[] {
-  const slots: Date[] = [];
-  const first = getZonedParts(start);
-  const last = getZonedParts(end);
-  const totalDays = Math.round(
-    (Date.UTC(last.year, last.month - 1, last.day) - Date.UTC(first.year, first.month - 1, first.day)) / DAY_MS,
-  );
-
-  for (let i = 0; i <= totalDays; i++) {
-    const dayDate = new Date(Date.UTC(first.year, first.month - 1, first.day + i));
-    if (!isWorkingDay(dayDate.getUTCDay())) continue;
-    const y = dayDate.getUTCFullYear();
-    const m = dayDate.getUTCMonth() + 1;
-    const d = dayDate.getUTCDate();
-    for (const hour of SLOT_HOURS) {
-      const instant = santiagoToUtc(y, m, d, hour);
-      if (instant >= start && instant <= end) slots.push(instant);
-    }
-  }
-  return slots.sort((a, b) => a.getTime() - b.getTime());
+/** Horario que comienza a esa hora (reloj de Santiago), si existe. */
+export function findSlotByStartHour(hour: number): TimeSlot | undefined {
+  return TIME_SLOTS.find((slot) => slot.startHour === hour);
 }
 
-/** ¿Es un instante agendable? (alineado a bloque, día hábil lun–vie, dentro de la ventana). */
+/** Fin del horario que comienza en `start`. Lanza si `start` no es inicio de un horario. */
+export function slotEnd(start: Date): Date {
+  const parts = getZonedParts(start);
+  const slot = findSlotByStartHour(parts.hour);
+  if (!slot || parts.minute !== 0) throw new Error(`${start.toISOString()} no es inicio de un horario`);
+  return santiagoToUtc(parts.year, parts.month, parts.day, slot.endHour);
+}
+
+/** ¿Es un instante agendable? (inicio de horario, día hábil lun–vie, dentro de la ventana). */
 export function isBookableSlot(instant: Date): boolean {
   if (Number.isNaN(instant.getTime())) return false;
   const { start, end } = bookingWindow();
@@ -137,23 +136,11 @@ export function isBookableSlot(instant: Date): boolean {
   return (
     isWorkingDay(parts.weekday) &&
     parts.minute === 0 &&
-    (SLOT_HOURS as readonly number[]).includes(parts.hour)
+    findSlotByStartHour(parts.hour) !== undefined
   );
 }
 
 /** Día de la semana (0 = domingo) de una fecha de calendario, sin ambigüedad de zona horaria. */
 export function weekdayOfCalendarDate(year: number, month: number, day: number): number {
   return new Date(Date.UTC(year, month - 1, day)).getUTCDay();
-}
-
-/** Parsea un parámetro `from=YYYY-MM-DD` como medianoche en Santiago. */
-export function parseDateParam(raw: string): Date | null {
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(raw);
-  if (!match) return null;
-  const [year, month, day] = match.slice(1).map(Number);
-  if (month < 1 || month > 12 || day < 1 || day > 31) return null;
-  const date = santiagoToUtc(year, month, day, 0);
-  const parts = getZonedParts(date);
-  if (parts.year !== year || parts.month !== month || parts.day !== day) return null;
-  return date;
 }
